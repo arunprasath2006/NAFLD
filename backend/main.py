@@ -83,7 +83,17 @@ def root():
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    sklearn_ver = "unknown"
+    try:
+        import sklearn
+        sklearn_ver = sklearn.__version__
+    except Exception:
+        pass
+    return {
+        "status": "ok",
+        "version": "2.0.2-compat",
+        "scikit_learn_version": sklearn_ver
+    }
 
 
 @app.get("/api/download-verification-report")
