@@ -12,8 +12,29 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 
+def _patch_estimator(est):
+    """Ensure estimators unpickled across scikit-learn versions have required internal attributes."""
+    if est is None:
+        return est
+    if hasattr(est, "steps"):
+        for _, step in est.steps:
+            _patch_estimator(step)
+    if hasattr(est, "named_steps"):
+        for _, step in est.named_steps.items():
+            _patch_estimator(step)
+    # SimpleImputer compatibility fix for scikit-learn version differences (missing _fill_dtype)
+    if "SimpleImputer" in est.__class__.__name__:
+        if not hasattr(est, "_fill_dtype"):
+            stats = getattr(est, "statistics_", None)
+            if stats is not None and hasattr(stats, "dtype"):
+                est._fill_dtype = stats.dtype
+            else:
+                est._fill_dtype = np.float64
+    return est
+
+
 # Base models & artifacts
-_scaler = joblib.load(BASE / "models/scaler.pkl")
+_scaler = _patch_estimator(joblib.load(BASE / "models/scaler.pkl"))
 with open(BASE / "models/feature_names.json") as f:
     _meta = json.load(f)
 with open(BASE / "models/feature_importance.json") as f:
@@ -40,7 +61,7 @@ for k, fname in _model_files.items():
     p = BASE / "models" / fname
     if p.exists():
         try:
-            _models[k] = joblib.load(p)
+            _models[k] = _patch_estimator(joblib.load(p))
         except Exception:
             pass
 
@@ -49,7 +70,7 @@ _binary_model = None
 binary_p = BASE / "models" / "binary_nafld_model.pkl"
 if binary_p.exists():
     try:
-        _binary_model = joblib.load(binary_p)
+        _binary_model = _patch_estimator(joblib.load(binary_p))
     except Exception:
         pass
 
@@ -115,6 +136,11 @@ def predict_single(data: dict, model_name: str = "improved_rf") -> dict:
         else:
             active_model = _models.get("improved_rf") or _models.get("default")
             model_key = "improved_rf"
+
+    if active_model is not None:
+        _patch_estimator(active_model)
+    if _binary_model is not None:
+        _patch_estimator(_binary_model)
 
     if model_key != "ensemble":
         if model_key == "logistic_regression":
