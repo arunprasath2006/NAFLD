@@ -1,0 +1,12 @@
+api/
+backend/
+src/
+models/
+data/
+notebooks/
+reports/
+requirements.txt
+run_server.py
+.pytest_cache/
+tests/
+__pycache__/

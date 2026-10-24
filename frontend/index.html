@@ -1,0 +1,3022 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAFLD Intelligence — AI Clinical Portal</title>
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg-main: #0B0F17;
+    --bg-card: rgba(19, 26, 42, 0.75);
+    --bg-card-solid: #131A2A;
+    --bg-input: #1A2336;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-highlight: rgba(56, 189, 248, 0.35);
+    --text-primary: #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-muted: #64748B;
+    
+    --accent-cyan: #38BDF8;
+    --accent-blue: #3B82F6;
+    --accent-teal: #14B8A6;
+    
+    --grade-none: #10B981;
+    --grade-none-bg: rgba(16, 185, 129, 0.15);
+    --grade-mild: #F59E0B;
+    --grade-mild-bg: rgba(245, 158, 11, 0.15);
+    --grade-moderate: #F97316;
+    --grade-moderate-bg: rgba(249, 115, 22, 0.15);
+    --grade-severe: #EF4444;
+    --grade-severe-bg: rgba(239, 68, 68, 0.15);
+    
+    --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.12);
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  [data-theme="light"] {
+    --bg-main: #F8FAFC;
+    --bg-card: rgba(255, 255, 255, 0.88);
+    --bg-card-solid: #FFFFFF;
+    --bg-input: #F1F5F9;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --border-highlight: rgba(14, 165, 233, 0.4);
+    --text-primary: #0F172A;
+    --text-secondary: #475569;
+    --text-muted: #94A3B8;
+    --shadow-glow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.5;
+    background-image: 
+      radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.05) 0%, transparent 40%),
+      radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+    background-attachment: fixed;
+    transition: background-color 0.3s ease;
+  }
+
+  /* App Container */
+  .container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 20px 24px;
+  }
+
+  /* Header Navbar */
+  header.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 24px;
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+
+  .brand-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 20px;
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+  }
+
+  .brand-text h1 {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--text-primary), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .brand-text p {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-input);
+    padding: 4px;
+    border-radius: 30px;
+  }
+
+  .nav-item {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+  }
+
+  .nav-item.active, .nav-item:hover {
+    color: var(--accent-cyan);
+    background: var(--bg-card-solid);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .theme-toggle-btn {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    transition: var(--transition);
+  }
+
+  .theme-toggle-btn:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  /* Page Views Management */
+  .view-page {
+    display: none;
+    animation: fadeIn 0.35s ease-out;
+  }
+  .view-page.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* =========================================================
+     VIEW 1: LOGIN PAGE
+     ========================================================= */
+  .login-container {
+    max-width: 440px;
+    margin: 60px auto;
+  }
+
+  .login-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px;
+    box-shadow: var(--shadow-glow);
+    text-align: center;
+  }
+
+  .login-card .brand-icon {
+    width: 54px;
+    height: 54px;
+    font-size: 26px;
+    margin: 0 auto 16px;
+  }
+
+  .login-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .login-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
+
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-secondary);
+  }
+
+  .input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-with-icon i {
+    position: absolute;
+    left: 14px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+  .input-with-icon input, .input-with-icon select {
+    width: 100%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px 12px 40px;
+    color: var(--text-primary);
+    font-size: 14px;
+    outline: none;
+    transition: var(--transition);
+  }
+  .input-with-icon input:focus, .input-with-icon select:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+  }
+
+  .login-btn {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    margin-top: 8px;
+    transition: var(--transition);
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.3);
+  }
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+  }
+
+  .demo-btn {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px dashed var(--accent-cyan);
+    color: var(--accent-cyan);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 11px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    margin-top: 4px;
+  }
+  .demo-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+  }
+
+  /* =========================================================
+     VIEW 2: LANDING / HOME PAGE
+     ========================================================= */
+  .hero-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 48px;
+    margin-bottom: 28px;
+    box-shadow: var(--shadow-glow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-content {
+    max-width: 760px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    color: var(--accent-cyan);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #FFFFFF, var(--text-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 28px;
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+    transition: var(--transition);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(56, 189, 248, 0.5);
+  }
+
+  .btn-secondary {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+  }
+  .btn-secondary:hover {
+    border-color: var(--accent-cyan);
+    color: var(--accent-cyan);
+  }
+
+  /* Stats Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 900px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+  .stat-lbl {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* Features Grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 850px) {
+    .features-grid { grid-template-columns: 1fr; }
+  }
+
+  .feature-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    transition: var(--transition);
+  }
+  .feature-box:hover {
+    border-color: var(--border-highlight);
+    transform: translateY(-4px);
+  }
+
+  .feature-icon {
+    font-size: 24px;
+    color: var(--accent-cyan);
+    margin-bottom: 14px;
+  }
+
+  .feature-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .feature-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  /* =========================================================
+     VIEW 3: RISK PREDICTOR DASHBOARD (Built in Step 1)
+     ========================================================= */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+  }
+  @media (max-width: 1080px) {
+    .dashboard-grid { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+  }
+  .card-title i { color: var(--accent-cyan); }
+
+  .presets-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 640px) { .presets-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .preset-btn {
+    background: #111C35;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-sm);
+    padding: 8px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  [data-theme="light"] .preset-btn { background: #F1F5F9; border-color: rgba(0, 0, 0, 0.08); }
+  .preset-btn:hover { border-color: var(--accent-cyan); transform: translateY(-2px); background: #162444; }
+  [data-theme="light"] .preset-btn:hover { background: #E2E8F0; }
+  .preset-btn .badge { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+  .preset-btn.p-none .badge { background: var(--grade-none-bg); color: var(--grade-none); }
+  .preset-btn.p-mild .badge { background: var(--grade-mild-bg); color: var(--grade-mild); }
+  .preset-btn.p-moderate .badge { background: var(--grade-moderate-bg); color: var(--grade-moderate); }
+  .preset-btn.p-severe .badge { background: var(--grade-severe-bg); color: var(--grade-severe); }
+
+  .tab-nav {
+    display: flex;
+    gap: 6px;
+    background: rgba(17, 28, 53, 0.7);
+    padding: 5px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+  [data-theme="light"] .tab-nav { background: #F1F5F9; border-color: rgba(0,0,0,0.06); }
+  .tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 9px 8px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { color: var(--text-primary); background: rgba(255, 255, 255, 0.04); }
+  .tab-btn.active { background: #172554; color: #38BDF8; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+  [data-theme="light"] .tab-btn.active { background: #E0F2FE; color: #0284C7; }
+
+  /* Manual Entry Container & Components (Matches Mockup) */
+  .manual-entry-card {
+    background: #0B132B;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  }
+  [data-theme="light"] .manual-entry-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  }
+
+  .manual-entry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .manual-entry-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #F8FAFC;
+    letter-spacing: -0.01em;
+  }
+  [data-theme="light"] .manual-entry-title { color: #0F172A; }
+  .manual-entry-title i { color: #38BDF8; font-size: 19px; }
+
+  .manual-entry-pill {
+    background: #172554;
+    color: #38BDF8;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 13px;
+    border-radius: 9999px;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    display: inline-flex;
+    align-items: center;
+    letter-spacing: 0.02em;
+  }
+  [data-theme="light"] .manual-entry-pill {
+    background: #E0F2FE;
+    color: #0284C7;
+    border-color: rgba(2, 132, 199, 0.2);
+  }
+
+  .manual-entry-subtitle {
+    font-size: 13px;
+    color: #94A3B8;
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+  [data-theme="light"] .manual-entry-subtitle { color: #64748B; }
+
+  .manual-field-card {
+    background: #111C35;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  [data-theme="light"] .manual-field-card {
+    background: #F8FAFC;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .manual-field-card:hover {
+    border-color: rgba(56, 189, 248, 0.3);
+  }
+
+  .manual-field-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .manual-field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #F1F5F9;
+  }
+  [data-theme="light"] .manual-field-label { color: #1E293B; }
+  .manual-field-unit {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94A3B8;
+  }
+  [data-theme="light"] .manual-field-unit { color: #64748B; }
+
+  .manual-field-input {
+    width: 100%;
+    background: #090E1A;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 14px;
+    color: #FFFFFF !important;
+    outline: none;
+    text-align: left !important;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  [data-theme="light"] .manual-field-input {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #0F172A !important;
+  }
+  .manual-field-input:focus {
+    border-color: #38BDF8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  }
+  .manual-field-input::-webkit-outer-spin-button,
+  .manual-field-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .manual-field-input[type=number] {
+    -moz-appearance: textfield;
+  }
+
+  .manual-field-select {
+    width: 100%;
+    background: #090E1A;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    color: #FFFFFF !important;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+  }
+  [data-theme="light"] .manual-field-select {
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    color: #0F172A !important;
+  }
+  .manual-field-select:focus {
+    border-color: #38BDF8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  }
+
+  .btn-compute-light {
+    width: 100%;
+    background: #F1F5F9;
+    color: #0F172A;
+    border: none;
+    border-radius: 9999px;
+    padding: 14px 24px;
+    font-size: 14.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    margin-top: 18px;
+  }
+  .btn-compute-light:hover {
+    background: #FFFFFF;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.18);
+  }
+  .btn-compute-light:active { transform: translateY(0); }
+  .btn-compute-light:disabled { opacity: 0.65; cursor: not-allowed; }
+
+  .manual-preview-disclaimer {
+    font-size: 11.5px;
+    color: #64748B;
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+  [data-theme="light"] .manual-preview-disclaimer { color: #94A3B8; }
+
+  .param-group { display: flex; flex-direction: column; gap: 0; }
+
+  .field-row {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .field-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+  .field-unit { font-size: 11px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+  .field-controls { display: grid; grid-template-columns: 1fr 90px; gap: 12px; align-items: center; }
+
+  input[type="range"] { accent-color: var(--accent-cyan); cursor: pointer; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; }
+  input[type="number"], select {
+    background: var(--bg-main);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    text-align: right;
+    outline: none;
+  }
+  select { text-align: left; }
+
+  .gauge-wrapper { position: relative; width: 240px; height: 135px; margin: 10px 0 0; }
+  .gauge-svg { width: 240px; height: 135px; }
+  .gauge-bg-arc { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 18; stroke-linecap: round; }
+  .gauge-fill-arc { fill: none; stroke: url(#gauge-gradient); stroke-width: 18; stroke-linecap: round; stroke-dasharray: 330; stroke-dashoffset: 330; transition: stroke-dashoffset 1s ease-out; }
+  .gauge-val-display { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); text-align: center; }
+  .grade-badge-large { font-size: 24px; font-weight: 800; padding: 4px 18px; border-radius: 30px; display: inline-block; margin-bottom: 4px; }
+  .conf-score { font-size: 13px; font-family: 'JetBrains Mono', monospace; color: var(--text-secondary); }
+
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } }
+
+  .chart-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px; }
+  .chart-card h4 { font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 12px; }
+  .chart-container { position: relative; height: 180px; width: 100%; }
+
+  .features-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; }
+  .feature-bar-item { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+  .feature-bar-meta { display: flex; justify-content: space-between; font-size: 12px; }
+  .feature-track { height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+  .feature-fill { height: 100%; background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue)); border-radius: 3px; width: 0%; transition: width 0.8s ease-out; }
+
+  /* =========================================================
+     VIEW 4: DOCUMENTATION PAGE
+     ========================================================= */
+  .docs-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .docs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 13px;
+  }
+  .docs-table th, .docs-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+  }
+  .docs-table th {
+    font-weight: 700;
+    color: var(--accent-cyan);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
+
+  /* =========================================================
+     VIEW: MEDICAL REPORT ANALYZER STYLES
+     ========================================================= */
+  .analyzer-hero-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-glow);
+  }
+
+  .analyzer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .analyzer-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .analyzer-title-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background: rgba(56, 189, 248, 0.12);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+
+  .analyzer-title-text h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+  }
+
+  .analyzer-title-text p {
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  /* Upload Drop Zone */
+  .drop-zone {
+    border: 2px dashed rgba(56, 189, 248, 0.35);
+    background: rgba(26, 35, 54, 0.45);
+    border-radius: var(--radius-md);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent-cyan);
+    background: rgba(56, 189, 248, 0.08);
+    transform: translateY(-2px);
+  }
+
+  .drop-icon {
+    font-size: 42px;
+    color: var(--accent-cyan);
+    margin-bottom: 12px;
+  }
+
+  .drop-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .drop-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .file-types-badge {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg-input);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+  }
+
+  /* Flow Step Cards Grid */
+  .flow-steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+  @media (max-width: 850px) {
+    .flow-steps-grid { grid-template-columns: 1fr; }
+  }
+
+  .flow-step-item {
+    background: var(--bg-card-solid);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .flow-step-icon {
+    color: var(--accent-cyan);
+    font-size: 18px;
+    margin-top: 2px;
+  }
+
+  .flow-step-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+
+  .flow-step-desc {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  /* File Preview Banner */
+  .file-preview-card {
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  .file-meta-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .file-meta-icon {
+    font-size: 24px;
+    color: var(--accent-cyan);
+  }
+
+  .file-meta-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .file-meta-size {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* Extraction Review Table */
+  .review-table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    margin-top: 16px;
+    margin-bottom: 20px;
+  }
+
+  .review-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+    text-align: left;
+  }
+
+  .review-table th {
+    background: var(--bg-input);
+    color: var(--text-secondary);
+    padding: 12px 14px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+  }
+
+  .review-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    vertical-align: middle;
+  }
+
+  .review-table tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .status-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .status-tag.extracted {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  .status-tag.missing {
+    background: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  .status-tag.abnormal {
+    background: rgba(249, 115, 22, 0.15);
+    color: #F97316;
+    border: 1px solid rgba(249, 115, 22, 0.3);
+  }
+
+  .cell-input {
+    background: var(--bg-card-solid);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    width: 110px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    transition: var(--transition);
+  }
+  .cell-input:focus {
+    border-color: var(--accent-cyan);
+    outline: none;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  }
+
+  .cell-input.missing-alert {
+    border-color: #EF4444;
+    background: rgba(239, 68, 68, 0.08);
+  }
+
+  /* History Table */
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-card-solid);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    transition: var(--transition);
+  }
+  .history-item:hover {
+    border-color: var(--border-highlight);
+  }
+
+  /* Utility & Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-card-solid);
+    border: 1px solid var(--accent-cyan);
+    color: var(--text-primary);
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    display: none;
+    z-index: 100;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header Navbar -->
+  <header class="navbar">
+    <div class="brand" onclick="navigateTo('home')">
+      <div class="brand-icon"><i class="fa-solid fa-liver"></i></div>
+      <div class="brand-text">
+        <h1>NAFLD Intelligence</h1>
+        <p>AI Clinical Screening Portal</p>
+      </div>
+    </div>
+
+    <!-- Navigation items (hidden on login screen) -->
+    <nav class="nav-links" id="main-nav">
+      <button class="nav-item active" id="nav-home" onclick="navigateTo('home')">
+        <i class="fa-solid fa-house"></i> Home
+      </button>
+      <button class="nav-item" id="nav-predictor" onclick="navigateTo('predictor')">
+        <i class="fa-solid fa-microchip"></i> Risk Predictor
+      </button>
+      <button class="nav-item" id="nav-analyzer" onclick="navigateTo('analyzer')">
+        <i class="fa-solid fa-file-medical"></i> Medical Report Analyzer
+      </button>
+      <button class="nav-item" id="nav-docs" onclick="navigateTo('docs')">
+        <i class="fa-solid fa-book-medical"></i> Model Docs
+      </button>
+    </nav>
+
+    <div class="header-controls">
+      <div class="user-badge" id="user-badge" style="display:none;">
+        <div class="user-avatar" id="user-avatar">DR</div>
+        <span id="user-name">Dr. Alex Reed</span>
+      </div>
+
+      <button class="nav-item" id="btn-auth-toggle" onclick="toggleAuthAction()" style="border:1px solid var(--border-color);">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </button>
+
+      <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Light/Dark Theme">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+
+  <!-- VIEW 1: LOGIN PAGE -->
+  <div class="view-page" id="view-login">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="brand-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <h2 class="login-title">Clinical Portal Sign In</h2>
+        <p class="login-subtitle">Access the AI-powered NAFLD Risk Diagnostic Suite</p>
+
+        <form class="login-form" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label>Role Select</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-user-doctor"></i>
+              <select id="login-role">
+                <option value="Clinician">Clinician / Physician</option>
+                <option value="Researcher">Biotech Researcher</option>
+                <option value="Student">Student / Guest</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-envelope"></i>
+              <input type="email" id="login-email" value="alex.reed@medical.org" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Password</label>
+            <div class="input-with-icon">
+              <i class="fa-solid fa-lock"></i>
+              <input type="password" id="login-pass" value="••••••••••••" required>
+            </div>
+          </div>
+
+          <button type="submit" class="login-btn">
+            <i class="fa-solid fa-right-to-bracket"></i> Sign In to Portal
+          </button>
+          
+          <button type="button" class="demo-btn" onclick="quickDemoLogin()">
+            <i class="fa-solid fa-bolt"></i> One-Click Quick Demo Access
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- VIEW 2: LANDING / HOME PAGE -->
+  <div class="view-page" id="view-home">
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge"><i class="fa-solid fa-atom"></i> Machine Learning Prototype</div>
+        <h2 class="hero-title">AI-Powered Non-Alcoholic Fatty Liver Disease Intelligence</h2>
+        <p class="hero-desc">
+          Predict patient fatty-liver severity grades (None, Mild, Moderate, Severe) from routine clinical blood work and anthropometric parameters using an optimized XGBoost gradient-boosted classifier.
+        </p>
+        <div class="hero-cta">
+          <button class="btn-primary" onclick="navigateTo('analyzer')">
+            <i class="fa-solid fa-file-medical"></i> Analyze Medical Report
+          </button>
+          <button class="btn-primary" onclick="navigateTo('predictor')" style="background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary);">
+            <i class="fa-solid fa-sliders"></i> Manual Parameter Entry
+          </button>
+          <button class="btn-secondary" onclick="navigateTo('docs')">
+            <i class="fa-solid fa-file-waveform"></i> View Model Architecture
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-database"></i></div>
+        <div>
+          <div class="stat-val">10,000</div>
+          <div class="stat-lbl">Clinical Patient Records</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <div>
+          <div class="stat-val">93.3%</div>
+          <div class="stat-lbl">ROC-AUC Performance</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-dna"></i></div>
+        <div>
+          <div class="stat-val">18</div>
+          <div class="stat-lbl">Biochemical Parameters</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-layer-group"></i></div>
+        <div>
+          <div class="stat-val">4 Grades</div>
+          <div class="stat-lbl">Severity Risk Classes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature Boxes -->
+    <div class="features-grid">
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-sliders"></i></div>
+        <h3 class="feature-title">Dual Input Control</h3>
+        <p class="feature-desc">Adjust clinical parameters with synchronized range sliders and numerical inputs with instant reference bounds.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-gauge-high"></i></div>
+        <h3 class="feature-title">Real-Time Risk Gauge</h3>
+        <p class="feature-desc">Visual arc gauge calculating multi-class severity probabilities and confidence scores instantaneously.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon"><i class="fa-solid fa-brain"></i></div>
+        <h3 class="feature-title">Feature Explainability</h3>
+        <p class="feature-desc">Gain insight into the statistical drivers influencing prediction outputs for transparent research.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- VIEW 3: RISK PREDICTOR DASHBOARD -->
+  <div class="view-page" id="view-predictor">
+    <div class="dashboard-grid">
+      
+      <!-- LEFT PANEL: MANUAL CLINICAL PARAMETERS ENTRY (Matches Mockup) -->
+      <div class="manual-entry-card">
+        
+        <!-- Presets Toolbar -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <span style="font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-secondary);">
+            <i class="fa-solid fa-bolt" style="color:var(--accent-cyan)"></i> Quick Clinical Presets
+          </span>
+          <span style="font-size:11px; color:var(--text-muted);">Simulate Patient</span>
+        </div>
+
+        <div class="presets-grid">
+          <div class="preset-btn p-none" onclick="loadPreset('none')">
+            <span class="badge">Grade 0</span>
+            <div class="p-label">Normal Healthy</div>
+          </div>
+          <div class="preset-btn p-mild" onclick="loadPreset('mild')">
+            <span class="badge">Grade 1</span>
+            <div class="p-label">Mild Signal</div>
+          </div>
+          <div class="preset-btn p-moderate" onclick="loadPreset('moderate')">
+            <span class="badge">Grade 2</span>
+            <div class="p-label">Moderate Risk</div>
+          </div>
+          <div class="preset-btn p-severe" onclick="loadPreset('severe')">
+            <span class="badge">Grade 3</span>
+            <div class="p-label">Severe NAFLD</div>
+          </div>
+        </div>
+
+        <!-- Section Navigation Tabs -->
+        <div class="tab-nav">
+          <button class="tab-btn active" onclick="switchTab('enzymes', event)"><i class="fa-solid fa-flask"></i> Enzymes & Liver</button>
+          <button class="tab-btn" onclick="switchTab('metabolic', event)"><i class="fa-solid fa-heart-pulse"></i> Lipids & Glucose</button>
+          <button class="tab-btn" onclick="switchTab('basic', event)"><i class="fa-solid fa-user-doctor"></i> Profile & History</button>
+        </div>
+
+        <form id="param-form" onsubmit="handlePredict(event)">
+          <!-- TAB 1: Liver Enzymes -->
+          <div class="param-group" id="tab-enzymes">
+            <div class="manual-entry-header">
+              <div class="manual-entry-title">
+                <i class="fa-solid fa-flask"></i> Enzymes & Liver
+              </div>
+              <div class="manual-entry-pill">Manual Entry</div>
+            </div>
+            <div class="manual-entry-subtitle">Enter values from the patient's laboratory report.</div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">ALT (Alanine Aminotransferase)</span>
+                <span class="manual-field-unit">U/L</span>
+              </div>
+              <input type="number" id="f_alt" class="manual-field-input" step="0.1" placeholder="e.g. 25">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">AST (Aspartate Aminotransferase)</span>
+                <span class="manual-field-unit">U/L</span>
+              </div>
+              <input type="number" id="f_ast" class="manual-field-input" step="0.1" placeholder="e.g. 22">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">GGT (Gamma-Glutamyl Transferase)</span>
+                <span class="manual-field-unit">U/L</span>
+              </div>
+              <input type="number" id="f_ggt" class="manual-field-input" step="0.1" placeholder="e.g. 28">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">Total Bilirubin</span>
+                <span class="manual-field-unit">mg/dL</span>
+              </div>
+              <input type="number" id="f_bilirubin_total" class="manual-field-input" step="0.01" placeholder="e.g. 0.8">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">Platelet Count</span>
+                <span class="manual-field-unit">×10³/µL</span>
+              </div>
+              <input type="number" id="f_platelet_count" class="manual-field-input" step="1" placeholder="e.g. 240">
+            </div>
+          </div>
+
+          <!-- TAB 2: Lipids & Metabolic -->
+          <div class="param-group" id="tab-metabolic" style="display:none;">
+            <div class="manual-entry-header">
+              <div class="manual-entry-title">
+                <i class="fa-solid fa-heart-pulse"></i> Lipids & Glucose
+              </div>
+              <div class="manual-entry-pill">Manual Entry</div>
+            </div>
+            <div class="manual-entry-subtitle">Enter values from the patient's laboratory report.</div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">Triglycerides</span>
+                <span class="manual-field-unit">mg/dL</span>
+              </div>
+              <input type="number" id="f_triglycerides" class="manual-field-input" step="0.1" placeholder="e.g. 130">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">HDL Cholesterol</span>
+                <span class="manual-field-unit">mg/dL</span>
+              </div>
+              <input type="number" id="f_hdl_cholestrol" class="manual-field-input" step="0.1" placeholder="e.g. 50">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">LDL Cholesterol</span>
+                <span class="manual-field-unit">mg/dL</span>
+              </div>
+              <input type="number" id="f_ldl_cholestrol" class="manual-field-input" step="0.1" placeholder="e.g. 110">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">Fasting Blood Sugar</span>
+                <span class="manual-field-unit">mg/dL</span>
+              </div>
+              <input type="number" id="f_fasting_blood_sugar" class="manual-field-input" step="0.1" placeholder="e.g. 92">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">TSH</span>
+                <span class="manual-field-unit">µIU/mL</span>
+              </div>
+              <input type="number" id="f_tsh" class="manual-field-input" step="0.01" placeholder="e.g. 1.8">
+            </div>
+          </div>
+
+          <!-- TAB 3: Basic & Comorbidities -->
+          <div class="param-group" id="tab-basic" style="display:none;">
+            <div class="manual-entry-header">
+              <div class="manual-entry-title">
+                <i class="fa-solid fa-user-doctor"></i> Profile & History
+              </div>
+              <div class="manual-entry-pill">Manual Entry</div>
+            </div>
+            <div class="manual-entry-subtitle">Enter values from the patient's laboratory report.</div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">BMI (Body Mass Index)</span>
+                <span class="manual-field-unit">kg/m²</span>
+              </div>
+              <input type="number" id="f_bmi" class="manual-field-input" step="0.1" placeholder="e.g. 24.5">
+            </div>
+
+            <div class="manual-field-card">
+              <div class="manual-field-header">
+                <span class="manual-field-label">Age</span>
+                <span class="manual-field-unit">years</span>
+              </div>
+              <input type="number" id="f_age" class="manual-field-input" step="1" placeholder="e.g. 42">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="manual-field-card">
+                <div class="manual-field-header">
+                  <span class="manual-field-label">Gender</span>
+                </div>
+                <select id="f_gender" class="manual-field-select">
+                  <option value="0">Male</option>
+                  <option value="1">Female</option>
+                </select>
+              </div>
+
+              <div class="manual-field-card">
+                <div class="manual-field-header">
+                  <span class="manual-field-label">Type 2 Diabetes</span>
+                </div>
+                <select id="f_diabetes_type_2" class="manual-field-select">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="manual-field-card">
+                <div class="manual-field-header">
+                  <span class="manual-field-label">Hypertension</span>
+                </div>
+                <select id="f_hypertension" class="manual-field-select">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+
+              <div class="manual-field-card">
+                <div class="manual-field-header">
+                  <span class="manual-field-label">PCOS</span>
+                </div>
+                <select id="f_pcos" class="manual-field-select">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                  <option value="2">N/A</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="manual-field-card">
+                <div class="manual-field-header">
+                  <span class="manual-field-label">Alcohol Use</span>
+                </div>
+                <select id="f_alcohol_status" class="manual-field-select">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+
+              <div class="manual-field-card">
+                <div class="manual-field-header">
+                  <span class="manual-field-label">Smoking</span>
+                </div>
+                <select id="f_smoking_status" class="manual-field-select">
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active AI Model Selector -->
+          <div class="manual-field-card" style="margin-top:16px; border-color:rgba(56, 189, 248, 0.25); background:rgba(56, 189, 248, 0.04);">
+            <div class="manual-field-header">
+              <span class="manual-field-label" style="color:var(--accent-cyan);"><i class="fa-solid fa-microchip"></i> Active AI Model Architecture</span>
+              <span class="manual-field-unit" style="color:var(--accent-green); font-weight:700;">Notebook Pipeline</span>
+            </div>
+            <select id="f_model_type" class="manual-field-select">
+              <option value="improved_rf" selected>Improved Random Forest Pipeline (250 Trees, Imputer, Scaler - Notebook Model)</option>
+              <option value="xgboost">XGBoost Multi-Class Classifier (Gradient Boosting)</option>
+              <option value="ensemble">Consensus Ensemble (Random Forest + XGBoost Blended)</option>
+              <option value="logistic_regression">Logistic Regression (Standardized Clinical Baseline)</option>
+            </select>
+          </div>
+
+          <!-- Light Submit Button (Matches Mockup 1:1) -->
+          <button type="submit" class="btn-compute-light" id="btn-predict">
+            <i class="fa-solid fa-brain"></i> Compute NAFLD Risk Analysis
+          </button>
+
+          <!-- Disclaimer / Preview Subtext (Matches Mockup 1:1) -->
+          <div class="manual-preview-disclaimer">
+            Enter clinical values to run the validated prediction model and generate the comprehensive pathology report.
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT PANEL DASHBOARD -->
+      <div class="results-panel" style="display:flex; flex-direction:column; gap:20px;">
+        <div class="card" style="text-align:center; padding:28px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div class="card-title"><i class="fa-solid fa-chart-pie"></i> Diagnostic Risk Assessment</div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-primary" id="btn-predictor-download-pdf" onclick="downloadPredictorPDF()" style="padding:7px 16px; font-size:12px; font-weight:700;">
+                <i class="fa-solid fa-file-pdf"></i> Download Official Clinical Test PDF
+              </button>
+              <button class="nav-item" onclick="window.print()" style="padding:7px 12px; font-size:12px;"><i class="fa-solid fa-print"></i> Print</button>
+            </div>
+          </div>
+
+          <div class="gauge-wrapper" style="margin: 20px auto 0;">
+            <svg class="gauge-svg" viewBox="0 0 200 110">
+              <defs>
+                <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#10B981" />
+                  <stop offset="35%" stop-color="#F59E0B" />
+                  <stop offset="70%" stop-color="#F97316" />
+                  <stop offset="100%" stop-color="#EF4444" />
+                </linearGradient>
+              </defs>
+              <path class="gauge-bg-arc" d="M 20,100 A 80,80 0 0,1 180,100" />
+              <path class="gauge-fill-arc" id="gauge-fill" d="M 20,100 A 80,80 0 0,1 180,100" />
+            </svg>
+            <div class="gauge-val-display">
+              <div class="grade-badge-large" id="res-grade-badge">Grade --</div>
+              <div class="conf-score" id="res-conf-text">Confidence: --%</div>
+            </div>
+          </div>
+
+          <!-- Dual-Mode Screening & Architecture Banner -->
+          <div id="res-screening-banner" style="margin-top:16px; padding:12px 16px; border-radius:10px; display:none; text-align:left; background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.2);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+              <span id="res-screening-text" style="font-weight:700; font-size:13px; color:var(--text-primary);"><i class="fa-solid fa-stethoscope"></i> Screening: --</span>
+              <span id="res-screening-metric" style="font-size:11px; color:var(--accent-green); font-weight:700; background:rgba(16,185,129,0.15); padding:2px 8px; border-radius:12px;">Specificity: 92.5% | ROC-AUC: 0.935</span>
+            </div>
+            <div id="res-model-text" style="font-size:11.5px; color:var(--text-muted); margin-top:6px;">
+              <i class="fa-solid fa-microchip"></i> Model: Improved Random Forest Pipeline (Notebook Model)
+            </div>
+          </div>
+
+          <!-- Direct Complete PDF Download Bar -->
+          <div id="predictor-pdf-action-bar" style="margin-top:16px; display:none;">
+            <button class="btn-primary" onclick="downloadPredictorPDF()" style="width:100%; padding:12px; font-size:13.5px; font-weight:700; background:linear-gradient(135deg, #0284C7, #0369A1); box-shadow:0 4px 14px rgba(2, 132, 199, 0.35);">
+              <i class="fa-solid fa-file-pdf"></i> Download Official Complete Pathology Test PDF Report
+            </button>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h4><i class="fa-solid fa-chart-donut"></i> Grade Probability Split</h4>
+            <div class="chart-container"><canvas id="probChart"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <h4><i class="fa-solid fa-radar"></i> Biomarker Index Radar</h4>
+            <div class="chart-container"><canvas id="radarChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="features-card">
+          <div class="card-title" style="margin-bottom:14px; font-size:14px;"><i class="fa-solid fa-diagram-project"></i> Key Influential Biomarkers</div>
+          <div id="features-list">
+            <div style="text-align:center; color:var(--text-muted); padding:20px; font-size:12px;">Run prediction to see top feature influences</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- VIEW 4: MODEL DOCUMENTATION PAGE -->
+  <div class="view-page" id="view-docs">
+    <div class="docs-container">
+      <div class="card">
+        <div class="card-title" style="font-size:18px; margin-bottom:12px;"><i class="fa-solid fa-award"></i> Model Benchmark Comparison (Multi-Class Severity Staging)</div>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          Evaluation results conducted on a held-out 20% test dataset (2,000 patient records, seed=42) comparing candidate machine learning models on 4-grade NAFLD staging (None, Mild, Moderate, Severe).
+        </p>
+
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Model Architecture</th>
+              <th>Accuracy</th>
+              <th>Macro Precision</th>
+              <th>Macro Recall</th>
+              <th>Macro F1</th>
+              <th>ROC-AUC (OVR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="background: rgba(16, 185, 129, 0.08); font-weight:700;">
+              <td><i class="fa-solid fa-code-branch" style="color:var(--accent-green)"></i> Improved Random Forest Pipeline (250 trees, Notebook Model)</td>
+              <td><strong>0.7895</strong></td>
+              <td>0.7410</td>
+              <td>0.7131</td>
+              <td>0.7225</td>
+              <td><strong>0.9323</strong></td>
+            </tr>
+            <tr style="background: rgba(56, 189, 248, 0.08); font-weight:700;">
+              <td><i class="fa-solid fa-check" style="color:var(--accent-cyan)"></i> XGBoost Multi-Class Classifier</td>
+              <td><strong>0.7930</strong></td>
+              <td><strong>0.7411</strong></td>
+              <td><strong>0.7573</strong></td>
+              <td><strong>0.7486</strong></td>
+              <td>0.9318</td>
+            </tr>
+            <tr>
+              <td>Random Forest (300 trees, unscaled)</td>
+              <td>0.7820</td>
+              <td>0.7271</td>
+              <td>0.6973</td>
+              <td>0.7081</td>
+              <td><strong>0.9343</strong></td>
+            </tr>
+            <tr>
+              <td>Logistic Regression (Standardized Baseline)</td>
+              <td>0.7795</td>
+              <td>0.7267</td>
+              <td>0.7634</td>
+              <td>0.7423</td>
+              <td>0.9327</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Binary Screening Performance & Notebook Integration -->
+      <div class="card">
+        <div class="card-title" style="font-size:18px; margin-bottom:12px;"><i class="fa-solid fa-shield-virus"></i> Binary NAFLD Screening Detection (Healthy vs NAFLD)</div>
+        <p style="font-size:13px; color:var(--text-secondary);">
+          Binary screening benchmark utilizing the Notebook's Random Forest Pipeline architecture (<code style="background:var(--bg-secondary); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono',monospace;">SimpleImputer &rarr; StandardScaler &rarr; RandomForest 250 trees</code>) for first-line non-invasive disease detection.
+        </p>
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Evaluation Metric</th>
+              <th>Score</th>
+              <th>Clinical Significance</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>ROC-AUC (Receiver Operating Characteristic)</strong></td>
+              <td><span style="color:var(--accent-cyan); font-weight:700; font-size:15px;">0.9353 (93.5%)</span></td>
+              <td>Outstanding discriminatory power separating healthy individuals from fatty liver disease.</td>
+            </tr>
+            <tr>
+              <td><strong>Healthy Specificity (Recall for Healthy)</strong></td>
+              <td><span style="color:var(--accent-green); font-weight:700; font-size:15px;">0.9248 (92.5%)</span></td>
+              <td>Over 92% of healthy patients correctly ruled out, minimizing false alarms.</td>
+            </tr>
+            <tr>
+              <td><strong>NAFLD Detection Precision</strong></td>
+              <td><span style="color:var(--accent-green); font-weight:700; font-size:15px;">0.8772 (87.7%)</span></td>
+              <td>High positive predictive value for positive screening indications.</td>
+            </tr>
+            <tr>
+              <td><strong>Overall Screening Accuracy</strong></td>
+              <td><span style="font-weight:700; font-size:15px;">86.55%</span></td>
+              <td>Direct binary classification accuracy on routine biochemical markers.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Notebook Architecture Deep-Dive & Clinical Integrity Card -->
+      <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+        <div class="card-title" style="font-size:18px; margin-bottom:12px;"><i class="fa-solid fa-graduation-cap"></i> Notebook Integration & Analysis of the 92% Metric</div>
+        <div style="font-size:13px; color:var(--text-secondary); line-height:1.7;">
+          <p style="margin-bottom:10px;">
+            This deployment integrates the machine learning pipeline from <code style="color:var(--accent-cyan); font-family:'JetBrains Mono',monospace;">non-alcoholic-fatty-liver-disease-92-accuracy.ipynb</code>:
+            an automated scikit-learn pipeline composed of <strong style="color:var(--text-primary)">SimpleImputer(strategy='mean')</strong>, <strong style="color:var(--text-primary)">StandardScaler()</strong>, and <strong style="color:var(--text-primary)">RandomForestClassifier(n_estimators=250)</strong>.
+          </p>
+          <div style="background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.2); border-radius:8px; padding:14px; margin:12px 0;">
+            <div style="font-weight:700; color:var(--accent-cyan); margin-bottom:4px;"><i class="fa-solid fa-circle-info"></i> Academic & Clinical Integrity Note:</div>
+            <p style="margin-bottom:6px;">
+              In the original Kaggle notebook, the model was trained on the Mayo Clinic NAFLD survival study (<code style="font-family:'JetBrains Mono',monospace;">nafld1.csv</code>), where the target was 20-year mortality (<code style="font-family:'JetBrains Mono',monospace;">status</code>), and the features included longitudinal follow-up days (<code style="font-family:'JetBrains Mono',monospace;">futime</code>). Because 92.3% of those patients survived, the 92.6% accuracy represented survival prediction rather than liver disease diagnosis.
+            </p>
+            <p>
+              When applied to routine clinical biochemistry (our 10,000-patient cohort with liver enzymes and lipid panels), the notebook's pipeline delivers authentic clinical diagnostic utility: achieving <strong style="color:var(--accent-green)">93.53% ROC-AUC</strong> and <strong style="color:var(--accent-green)">92.5% healthy specificity</strong> on binary screening, and <strong style="color:var(--text-primary)">78.95% accuracy</strong> on 4-class disease severity staging.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 50-Patient Batch Verification Card -->
+      <div class="card" style="border: 1px solid rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.04);">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+          <div class="card-title" style="font-size:18px;"><i class="fa-solid fa-clipboard-check" style="color:var(--accent-green);"></i> 50-Patient Batch Verification &amp; Ground-Truth Cross-Check</div>
+          <a href="/api/download-verification-report" target="_blank" class="btn-primary" style="padding:8px 18px; font-size:12px; font-weight:700; text-decoration:none;">
+            <i class="fa-solid fa-file-pdf"></i> Download Official 50-Patient Verification PDF
+          </a>
+        </div>
+        <p style="font-size:13px; color:var(--text-secondary); margin-bottom:14px;">
+          Official quality assurance audit conducted across 50 multi-grade patient test records (TEST001 &ndash; TEST050), cross-referencing reference ground-truth labels against model predictions.
+        </p>
+
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; margin-bottom:6px;">
+          <div style="background:var(--bg-card); padding:12px; border-radius:8px; border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:var(--accent-green);">96.0%</div>
+            <div style="font-size:11px; color:var(--text-muted);">Exact 4-Class Match (48/50)</div>
+          </div>
+          <div style="background:var(--bg-card); padding:12px; border-radius:8px; border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:var(--accent-cyan);">100.0%</div>
+            <div style="font-size:11px; color:var(--text-muted);">Binary Screening (50/50)</div>
+          </div>
+          <div style="background:var(--bg-card); padding:12px; border-radius:8px; border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:var(--accent-green);">100.0%</div>
+            <div style="font-size:11px; color:var(--text-muted);">Clinical Tolerance (&le;1 Grade)</div>
+          </div>
+          <div style="background:var(--bg-card); padding:12px; border-radius:8px; border:1px solid var(--border-color); text-align:center;">
+            <div style="font-size:22px; font-weight:800; color:var(--accent-green);">0</div>
+            <div style="font-size:11px; color:var(--text-muted);">Major Discrepancies (&gt;1)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="font-size:18px; margin-bottom:12px;"><i class="fa-solid fa-filter-circle-dollar"></i> Per-Class Performance breakdown (XGBoost)</div>
+        <table class="docs-table">
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>Description</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>Support</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge" style="background:var(--grade-none-bg); color:var(--grade-none); padding:2px 8px; border-radius:4px; font-weight:700;">Grade 0</span></td>
+              <td>None</td>
+              <td>0.907</td>
+              <td>0.861</td>
+              <td>0.883</td>
+              <td>1,184</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:var(--grade-mild-bg); color:var(--grade-mild); padding:2px 8px; border-radius:4px; font-weight:700;">Grade 1</span></td>
+              <td>Mild</td>
+              <td>0.596</td>
+              <td>0.669</td>
+              <td>0.630</td>
+              <td>456</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:var(--grade-moderate-bg); color:var(--grade-moderate); padding:2px 8px; border-radius:4px; font-weight:700;">Grade 2</span></td>
+              <td>Moderate</td>
+              <td>0.664</td>
+              <td>0.664</td>
+              <td>0.664</td>
+              <td>223</td>
+            </tr>
+            <tr>
+              <td><span class="badge" style="background:var(--grade-severe-bg); color:var(--grade-severe); padding:2px 8px; border-radius:4px; font-weight:700;">Grade 3</span></td>
+              <td>Severe</td>
+              <td>0.823</td>
+              <td>0.847</td>
+              <td>0.835</td>
+              <td>137</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 5: MEDICAL REPORT ANALYZER -->
+  <div class="view-page" id="view-analyzer">
+    <!-- Top Hero Banner -->
+    <div class="analyzer-hero-card">
+      <div class="analyzer-header">
+        <div class="analyzer-title-wrap">
+          <div class="analyzer-title-icon"><i class="fa-solid fa-file-waveform"></i></div>
+          <div class="analyzer-title-text">
+            <h2>Medical Report Analyzer</h2>
+            <p>Upload &rarr; Extract &rarr; Verify &rarr; Stratify NAFLD Risk</p>
+          </div>
+        </div>
+        <span class="badge" style="background:rgba(56,189,248,0.15); color:var(--accent-cyan); font-weight:700; padding:6px 14px; border-radius:20px; border:1px solid rgba(56,189,248,0.3);">
+          <i class="fa-solid fa-microchip"></i> AI &bull; OCR Module
+        </span>
+      </div>
+
+      <!-- Drag & Drop Upload Zone (supports multiple files) -->
+      <div class="drop-zone" id="report-drop-zone" onclick="document.getElementById('file-report-input').click()">
+        <input type="file" id="file-report-input" style="display:none;" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple onchange="handleFileSelected(event)">
+        <div class="drop-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+        <h3 class="drop-title">Upload Patient Medical Laboratory Reports</h3>
+        <p class="drop-subtitle">Drag and drop multiple PDFs or report images here, or browse your device</p>
+        <span class="file-types-badge">PDF &bull; JPG &bull; PNG &bull; Multiple Files Supported</span>
+      </div>
+
+      <!-- Multiple Files List & Preview Card (hidden by default) -->
+      <div class="file-preview-card" id="file-preview-card" style="display:none; flex-direction:column; align-items:stretch; gap:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div style="font-size:13px; font-weight:700; color:var(--text-primary); display:flex; align-items:center; gap:8px;">
+            <i class="fa-solid fa-layer-group" style="color:var(--accent-cyan)"></i>
+            <span id="files-summary-count">2 Files Selected</span>
+          </div>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn-secondary" onclick="document.getElementById('file-report-input').click()" style="padding:6px 12px; font-size:11px;">
+              <i class="fa-solid fa-plus"></i> Add More
+            </button>
+            <button type="button" class="btn-primary" id="btn-extract-now" onclick="triggerReportExtraction()" style="padding:6px 16px; font-size:12px;">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Extract All Parameters
+            </button>
+            <button type="button" class="btn-secondary" onclick="resetReportUpload()" style="padding:6px 12px; font-size:11px;">
+              <i class="fa-solid fa-trash"></i> Clear All
+            </button>
+          </div>
+        </div>
+
+        <!-- Selected Files List -->
+        <div id="selected-files-list" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Dynamically populated file rows -->
+        </div>
+      </div>
+
+      <!-- Step Cards Overview -->
+      <div class="flow-steps-grid">
+        <div class="flow-step-item">
+          <div class="flow-step-icon"><i class="fa-solid fa-file-invoice"></i></div>
+          <div>
+            <div class="flow-step-title">Extracted Results</div>
+            <div class="flow-step-desc">Automated extraction of liver enzymes, lipid profile, glucose & metabolic markers with confidence scoring.</div>
+          </div>
+        </div>
+        <div class="flow-step-item">
+          <div class="flow-step-icon"><i class="fa-solid fa-clipboard-check"></i></div>
+          <div>
+            <div class="flow-step-title">Review & Confirm</div>
+            <div class="flow-step-desc">Review extracted figures against reference intervals, correct errors, and fill missing clinical history.</div>
+          </div>
+        </div>
+        <div class="flow-step-item">
+          <div class="flow-step-icon"><i class="fa-solid fa-chart-pie"></i></div>
+          <div>
+            <div class="flow-step-title">Assessment Results</div>
+            <div class="flow-step-desc">Validated XGBoost multi-class risk grade classification, radar biomarker profile & downloadable PDF summary.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 2: CLINICAL DATA REVIEW & VALIDATION SCREEN (Shown after upload/extraction) -->
+    <div class="card" id="analyzer-review-card" style="display:none; margin-bottom:24px;">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-user-doctor"></i> Clinical Parameters Verification Table
+        </div>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span id="extraction-summary-badge" class="badge" style="background:rgba(16,185,129,0.15); color:#10B981; font-weight:700; padding:4px 10px; border-radius:12px;">
+            14 / 18 Extracted
+          </span>
+          <button class="btn-secondary" onclick="fillSyntheticSampleReport()" style="padding:6px 12px; font-size:11px;" title="Load standard clinical mock values for testing">
+            <i class="fa-solid fa-flask"></i> Load Sample Test Data
+          </button>
+        </div>
+      </div>
+
+      <p style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;">
+        Please audit all values extracted from the report. Cells highlighted in red require manual verification or completion before model inference can proceed.
+      </p>
+
+      <div class="review-table-container">
+        <table class="review-table">
+          <thead>
+            <tr>
+              <th>Clinical Parameter</th>
+              <th>Category</th>
+              <th>Verified Value</th>
+              <th>Unit</th>
+              <th>Reference Interval</th>
+              <th>Extraction Status</th>
+              <th>Confidence</th>
+              <th>Report Source Text</th>
+            </tr>
+          </thead>
+          <tbody id="review-table-body">
+            <!-- Dynamically populated rows -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; padding-top:10px; border-top:1px solid var(--border-color);">
+        <div id="validation-error-banner" style="font-size:12px; color:#EF4444; font-weight:600; display:none;">
+          <i class="fa-solid fa-triangle-exclamation"></i> Please resolve missing or out-of-range clinical parameters before running model.
+        </div>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; margin-left:auto;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:12px; font-weight:600; color:var(--text-secondary);"><i class="fa-solid fa-microchip"></i> AI Model:</span>
+            <select id="analyzer_model_type" style="background:var(--bg-secondary); border:1px solid var(--border-color); color:var(--text-primary); border-radius:6px; padding:8px 12px; font-size:12px;">
+              <option value="improved_rf" selected>Improved Random Forest Pipeline (Notebook Model)</option>
+              <option value="xgboost">XGBoost Multi-Class Classifier</option>
+              <option value="ensemble">Consensus Ensemble (RF + XGBoost)</option>
+            </select>
+          </div>
+          <button class="btn-secondary" onclick="resetReportUpload()" style="padding:10px 18px;">
+            <i class="fa-solid fa-rotate-left"></i> Reset & Re-upload
+          </button>
+          <button class="btn-primary" id="btn-confirm-and-analyze" onclick="handleConfirmAndAnalyze()" style="padding:10px 24px; font-weight:700;">
+            <i class="fa-solid fa-microchip"></i> Confirm Values & Analyze NAFLD Risk
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 3: ASSESSMENT RESULTS DISPLAY (Shown after prediction) -->
+    <div class="card" id="analyzer-results-card" style="display:none; margin-bottom:24px;">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-square-poll-vertical"></i> NAFLD Screening Results & Stratification
+        </div>
+        <button class="btn-primary" id="btn-download-pdf-report" onclick="downloadAssessmentPDF()" style="padding:8px 16px; font-size:12px;">
+          <i class="fa-solid fa-file-pdf"></i> Download Official PDF Summary
+        </button>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- Result Summary & Probability -->
+        <div class="card" style="background:var(--bg-card-solid); border:1px solid var(--border-color);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+            <span class="card-title" style="font-size:14px;"><i class="fa-solid fa-heart-circle-bolt"></i> Risk Stratification</span>
+            <span id="analyzer-res-badge" class="badge" style="font-size:13px; font-weight:800; padding:6px 14px; border-radius:20px;">Moderate Risk</span>
+          </div>
+          
+          <div style="text-align:center; padding:16px 0;">
+            <div style="font-size:36px; font-weight:800; color:var(--text-primary); margin-bottom:4px;" id="analyzer-res-grade-text">Grade 2</div>
+            <div style="font-size:13px; color:var(--text-secondary); font-family:'JetBrains Mono',monospace;" id="analyzer-res-conf-text">Model Confidence: 78.4%</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:6px;" id="analyzer-res-timestamp">Assessment Completed: Just now</div>
+
+            <!-- Dual-Mode Screening Banner -->
+            <div id="analyzer-res-screening-banner" style="margin-top:14px; padding:10px 14px; border-radius:8px; display:none; text-align:left; background:rgba(56,189,248,0.06); border:1px solid rgba(56,189,248,0.2);">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="analyzer-res-screening-status" style="font-weight:700; font-size:13px; color:var(--text-primary);"><i class="fa-solid fa-stethoscope"></i> Screening: --</span>
+                <span id="analyzer-res-screening-metric" style="font-size:11px; color:var(--accent-green); font-weight:700;">Specificity: 92.5% | ROC-AUC: 0.935</span>
+              </div>
+              <div id="analyzer-res-model-name" style="font-size:11px; color:var(--text-muted); margin-top:4px;">
+                <i class="fa-solid fa-microchip"></i> Model: Improved Random Forest Pipeline (Notebook Model)
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;">
+            <div style="font-size:12px; font-weight:700; color:var(--text-secondary); margin-bottom:10px;">Multi-Class Probability Distribution</div>
+            <div style="height:210px; position:relative;">
+              <canvas id="analyzerProbChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Biomarker Profile & Radar Chart -->
+        <div class="card" style="background:var(--bg-card-solid); border:1px solid var(--border-color);">
+          <div class="card-title" style="font-size:14px; margin-bottom:16px;">
+            <i class="fa-solid fa-dna"></i> Patient Biomarker Radar Profile
+          </div>
+          <div style="height:260px; position:relative;">
+            <canvas id="analyzerRadarChart"></canvas>
+          </div>
+          <div style="margin-top:14px; font-size:11.5px; color:var(--text-secondary); line-height:1.5;">
+            <i class="fa-solid fa-circle-info" style="color:var(--accent-cyan)"></i>
+            Biomarker radar coordinates reflect normalized ratios against clinical normal upper limits (ALT: 45 U/L, AST: 40 U/L, GGT: 40 U/L, Triglycerides: 150 mg/dL, BMI: 25 kg/m²).
+          </div>
+        </div>
+      </div>
+
+      <!-- Regulatory Disclaimer Card -->
+      <div style="margin-top:20px; padding:16px; background:rgba(239, 68, 68, 0.06); border:1px solid rgba(239, 68, 68, 0.2); border-radius:var(--radius-md);">
+        <div style="display:flex; gap:10px; align-items:flex-start;">
+          <i class="fa-solid fa-triangle-exclamation" style="color:#EF4444; font-size:16px; margin-top:2px;"></i>
+          <div style="font-size:12px; color:var(--text-secondary); line-height:1.6;">
+            <strong style="color:var(--text-primary);">Clinical Disclaimer:</strong>
+            This assessment is produced by an AI research prototype using machine learning patterns. It does not replace a clinical consultation, liver biopsy, or abdominal ultrasound. Always consult a qualified physician or gastroenterologist for medical decisions.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STAGE 4: ASSESSMENT HISTORY LIST -->
+    <div class="card" style="margin-top:24px;">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-clock-rotate-left"></i> Patient Assessment History & Log
+        </div>
+        <button class="btn-secondary" onclick="loadAssessmentHistory()" style="padding:6px 12px; font-size:11px;">
+          <i class="fa-solid fa-rotate"></i> Refresh History
+        </button>
+      </div>
+
+      <div id="assessment-history-list">
+        <div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">
+          No previous report assessments recorded in this session.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast Message -->
+<div class="toast" id="toast-msg">Notification message</div>
+
+<script>
+const API_BASE = window.NAFLD_API_BASE || (window.location.origin.startsWith("http") ? window.location.origin : "http://127.0.0.1:8000");
+
+// Presets Data
+const PRESETS = {
+  none: { age:32, gender:0, bmi:22.4, alcohol_status:0, smoking_status:0, alt:22, ast:20, ggt:24, bilirubin_total:0.7, triglycerides:95, hdl_cholestrol:58, ldl_cholestrol:90, platelet_count:260, fasting_blood_sugar:88, tsh:1.8, diabetes_type_2:0, hypertension:0, pcos:2 },
+  mild: { age:44, gender:1, bmi:27.8, alcohol_status:0, smoking_status:0, alt:48, ast:36, ggt:52, bilirubin_total:0.9, triglycerides:165, hdl_cholestrol:45, ldl_cholestrol:125, platelet_count:220, fasting_blood_sugar:104, tsh:2.3, diabetes_type_2:0, hypertension:1, pcos:0 },
+  moderate: { age:52, gender:0, bmi:31.5, alcohol_status:1, smoking_status:1, alt:68, ast:54, ggt:88, bilirubin_total:1.2, triglycerides:240, hdl_cholestrol:38, ldl_cholestrol:145, platelet_count:195, fasting_blood_sugar:128, tsh:3.1, diabetes_type_2:1, hypertension:1, pcos:2 },
+  severe: { age:58, gender:0, bmi:36.2, alcohol_status:1, smoking_status:1, alt:115, ast:92, ggt:165, bilirubin_total:1.8, triglycerides:380, hdl_cholestrol:32, ldl_cholestrol:175, platelet_count:155, fasting_blood_sugar:165, tsh:4.2, diabetes_type_2:1, hypertension:1, pcos:2 }
+};
+
+let probChartInstance = null;
+let radarChartInstance = null;
+let currentUser = JSON.parse(localStorage.getItem('nafld_user')) || {
+  name: 'Dr. Alex Reed, MD',
+  role: 'Consultant Hepatologist',
+  initials: 'AR',
+  email: 'alex.reed@medical.org'
+};
+
+// Page Navigation Router
+function navigateTo(viewId) {
+  if (viewId !== 'login' && !currentUser) {
+    viewId = 'login';
+  }
+  
+  document.querySelectorAll('.view-page').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  const targetView = document.getElementById('view-' + viewId);
+  const targetNav = document.getElementById('nav-' + viewId);
+
+  if (targetView) targetView.classList.add('active');
+  if (targetNav) targetNav.classList.add('active');
+
+  const mainNav = document.getElementById('main-nav');
+  if (viewId === 'login') {
+    mainNav.style.display = 'none';
+  } else {
+    mainNav.style.display = 'flex';
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Authentication Handlers
+function updateAuthState() {
+  const badge = document.getElementById('user-badge');
+  const btn = document.getElementById('btn-auth-toggle');
+
+  if (currentUser) {
+    badge.style.display = 'flex';
+    document.getElementById('user-name').textContent = currentUser.name;
+    document.getElementById('user-avatar').textContent = currentUser.initials;
+    btn.innerHTML = `<i class="fa-solid fa-right-from-bracket"></i> Logout`;
+  } else {
+    badge.style.display = 'none';
+    btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i> Sign In`;
+  }
+}
+
+function toggleAuthAction() {
+  if (currentUser) {
+    currentUser = null;
+    localStorage.removeItem('nafld_user');
+    showToast("Signed out successfully");
+    updateAuthState();
+    navigateTo('login');
+  } else {
+    navigateTo('login');
+  }
+}
+
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const role = document.getElementById('login-role').value;
+  const name = email.split('@')[0].replace('.', ' ');
+  const formattedName = (role === 'Clinician' ? 'Dr. ' : '') + name.charAt(0).toUpperCase() + name.slice(1);
+  const initials = name.slice(0,2).toUpperCase();
+
+  currentUser = { name: formattedName, initials, role, email };
+  localStorage.setItem('nafld_user', JSON.stringify(currentUser));
+
+  showToast(`Welcome back, ${formattedName}!`);
+  updateAuthState();
+  navigateTo('home');
+}
+
+function quickDemoLogin() {
+  currentUser = { name: "Dr. Alex Reed", initials: "AR", role: "Clinician", email: "alex.reed@medical.org" };
+  localStorage.setItem('nafld_user', JSON.stringify(currentUser));
+  showToast("Logged in with Quick Demo Access!");
+  updateAuthState();
+  navigateTo('home');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast-msg');
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 3000);
+}
+
+// Tab Switcher inside Predictor
+function switchTab(tabName, event) {
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.param-group').forEach(group => group.style.display = 'none');
+  
+  if (event) event.currentTarget.classList.add('active');
+  document.getElementById('tab-' + tabName).style.display = 'flex';
+}
+
+function sync(key, value) {
+  const range = document.getElementById('r_' + key);
+  const num = document.getElementById('f_' + key);
+  if (range) range.value = value;
+  if (num) num.value = value;
+}
+
+function loadPreset(type) {
+  const data = PRESETS[type];
+  if (!data) return;
+  Object.keys(data).forEach(k => {
+    const el = document.getElementById('f_' + k);
+    if (el) {
+      el.value = data[k];
+      sync(k, data[k]);
+    }
+  });
+  handlePredict();
+}
+
+function getFormData() {
+  const keys = ['age','gender','bmi','alcohol_status','smoking_status','alt','ast','ggt','bilirubin_total','triglycerides','hdl_cholestrol','ldl_cholestrol','platelet_count','fasting_blood_sugar','tsh','diabetes_type_2','hypertension','pcos'];
+  const payload = {};
+  keys.forEach(k => {
+    payload[k] = Number(document.getElementById('f_' + k).value || 0);
+  });
+  const modelEl = document.getElementById('f_model_type');
+  if (modelEl) {
+    payload['model_type'] = modelEl.value;
+  }
+  return payload;
+}
+
+async function handlePredict(e) {
+  if (e) e.preventDefault();
+  const payload = getFormData();
+  const btn = document.getElementById('btn-predict');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing Model...`;
+
+  try {
+    const res = await fetch(`${API_BASE}/predict`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error("API returned status " + res.status);
+    const result = await res.json();
+    currentPredictionResult = result;
+    currentVerifiedInputs = payload;
+    updateDashboard(result, payload);
+    const pdfBar = document.getElementById('predictor-pdf-action-bar');
+    if (pdfBar) pdfBar.style.display = 'block';
+  } catch (err) {
+    alert("Prediction failed: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-brain"></i> Compute NAFLD Risk Analysis`;
+  }
+}
+
+function updateDashboard(res, inputs) {
+  const gradeColors = { None: "#10B981", Mild: "#F59E0B", Moderate: "#F97316", Severe: "#EF4444" };
+  const gradeBgs = { None: "rgba(16, 185, 129, 0.2)", Mild: "rgba(245, 158, 11, 0.2)", Moderate: "rgba(249, 115, 22, 0.2)", Severe: "rgba(239, 68, 68, 0.2)" };
+  const offsets = { None: 247, Mild: 165, Moderate: 82, Severe: 0 };
+
+  const color = gradeColors[res.prediction] || "#38BDF8";
+  const bg = gradeBgs[res.prediction] || "rgba(56, 189, 248, 0.2)";
+  
+  const badge = document.getElementById('res-grade-badge');
+  badge.textContent = `${res.prediction} Risk`;
+  badge.style.color = color;
+  badge.style.backgroundColor = bg;
+
+  document.getElementById('res-conf-text').textContent = `Confidence: ${(res.probability * 100).toFixed(1)}%`;
+  
+  const fillArc = document.getElementById('gauge-fill');
+  fillArc.style.strokeDashoffset = offsets[res.prediction] ?? 165;
+
+  // Screening Banner & Active Model details
+  const banner = document.getElementById('res-screening-banner');
+  if (banner) {
+    banner.style.display = 'block';
+    if (res.binary_screening && res.binary_screening.status) {
+      const isPos = res.binary_screening.is_positive;
+      const statusColor = isPos ? 'var(--accent-orange)' : 'var(--accent-green)';
+      const confPct = (res.binary_screening.confidence * 100).toFixed(1);
+      document.getElementById('res-screening-text').innerHTML = `<i class="fa-solid fa-stethoscope"></i> Screening: <span style="color:${statusColor}">${res.binary_screening.status}</span> (${confPct}%)`;
+      document.getElementById('res-screening-metric').textContent = `Specificity: ${res.binary_screening.specificity_benchmark || '92.5%'} | ROC-AUC: ${res.binary_screening.roc_auc_benchmark || '0.935'}`;
+    }
+    if (res.model_info && res.model_info.model_name) {
+      document.getElementById('res-model-text').innerHTML = `<i class="fa-solid fa-microchip"></i> Model: <strong>${res.model_info.model_name}</strong>`;
+    }
+  }
+
+  renderProbChart(res.class_probabilities);
+  renderRadarChart(inputs);
+  renderFeatures(res.important_features);
+}
+
+function renderProbChart(probs) {
+  const ctx = document.getElementById('probChart').getContext('2d');
+  const labels = Object.keys(probs);
+  const data = Object.values(probs).map(v => (v * 100).toFixed(1));
+
+  if (probChartInstance) probChartInstance.destroy();
+  probChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{ data: data, backgroundColor: ['#10B981', '#F59E0B', '#F97316', '#EF4444'], borderWidth: 0 }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { color: '#94A3B8', font: { size: 10 } } } },
+      cutout: '65%'
+    }
+  });
+}
+
+function renderRadarChart(inputs) {
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  const bmiNorm = Math.min(100, (inputs.bmi / 25) * 50);
+  const altNorm = Math.min(100, (inputs.alt / 45) * 50);
+  const astNorm = Math.min(100, (inputs.ast / 40) * 50);
+  const ggtNorm = Math.min(100, (inputs.ggt / 40) * 50);
+  const trigNorm = Math.min(100, (inputs.triglycerides / 150) * 50);
+
+  if (radarChartInstance) radarChartInstance.destroy();
+  radarChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['BMI', 'ALT', 'AST', 'GGT', 'Triglycerides'],
+      datasets: [{ label: 'Patient Index', data: [bmiNorm, altNorm, astNorm, ggtNorm, trigNorm], backgroundColor: 'rgba(56, 189, 248, 0.2)', borderColor: '#38BDF8', borderWidth: 2 }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { r: { angleLines: { color: 'rgba(255,255,255,0.1)' }, grid: { color: 'rgba(255,255,255,0.1)' }, pointLabels: { color: '#94A3B8', font: { size: 10 } }, ticks: { display: false } } },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+function renderFeatures(features) {
+  const container = document.getElementById('features-list');
+  const featureNames = { bmi:"BMI", alt:"ALT", ast:"AST", ggt:"GGT", tsh:"TSH", hdl_cholestrol:"HDL Cholesterol", ldl_cholestrol:"LDL Cholesterol", bilirubin_total:"Total Bilirubin", triglycerides:"Triglycerides", platelet_count:"Platelet Count", fasting_blood_sugar:"Fasting Glucose", diabetes_type_2:"Type 2 Diabetes", hypertension:"Hypertension", alcohol_status:"Alcohol Use", smoking_status:"Smoking", pcos:"PCOS" };
+  const maxImp = Math.max(...features.map(f => f.importance));
+
+  container.innerHTML = features.map(f => {
+    const pct = (f.importance * 100).toFixed(1);
+    const fillWidth = (f.importance / maxImp * 100).toFixed(0);
+    const label = featureNames[f.feature] || f.feature;
+    return `
+      <div class="feature-bar-item">
+        <div class="feature-bar-meta">
+          <span class="feature-name" style="font-weight:600; font-size:12px;">${label}</span>
+          <span class="feature-val" style="font-family:'JetBrains Mono',monospace; color:var(--accent-cyan); font-weight:600; font-size:12px;">${pct}%</span>
+        </div>
+        <div class="feature-track"><div class="feature-fill" style="width:${fillWidth}%"></div></div>
+      </div>`;
+  }).join('');
+}
+
+// =========================================================
+// MEDICAL REPORT ANALYZER LOGIC
+// =========================================================
+let currentSelectedFiles = [];
+let currentExtractedData = null;
+let currentPredictionResult = null;
+let currentVerifiedInputs = null;
+let analyzerProbChartInstance = null;
+let analyzerRadarChartInstance = null;
+
+// Parameter clinical bounds & definitions
+const ANALYZER_PARAMS = [
+  { key: "age", name: "Age", category: "Demographic", unit: "years", ref: "18 - 85", type: "number", min: 0, max: 120, step: 1 },
+  { key: "gender", name: "Gender", category: "Demographic", unit: "binary", ref: "0=Male, 1=Female", type: "select", options: [{val:0, lbl:"Male (0)"}, {val:1, lbl:"Female (1)"}] },
+  { key: "bmi", name: "Body Mass Index (BMI)", category: "Anthropometric", unit: "kg/m²", ref: "18.5 - 24.9", type: "number", min: 10, max: 70, step: 0.1 },
+  { key: "alt", name: "ALT (Alanine Aminotransferase)", category: "Liver Enzyme", unit: "U/L", ref: "7 - 56", type: "number", min: 0, max: 1000, step: 1 },
+  { key: "ast", name: "AST (Aspartate Aminotransferase)", category: "Liver Enzyme", unit: "U/L", ref: "10 - 40", type: "number", min: 0, max: 1000, step: 1 },
+  { key: "ggt", name: "GGT (Gamma-Glutamyl Transferase)", category: "Liver Enzyme", unit: "U/L", ref: "9 - 48", type: "number", min: 0, max: 1000, step: 1 },
+  { key: "bilirubin_total", name: "Total Bilirubin", category: "Liver Function", unit: "mg/dL", ref: "0.1 - 1.2", type: "number", min: 0, max: 30, step: 0.01 },
+  { key: "platelet_count", name: "Platelet Count", category: "Hematology", unit: "×10³/µL", ref: "150 - 450", type: "number", min: 0, max: 1000, step: 1 },
+  { key: "triglycerides", name: "Triglycerides", category: "Lipid Profile", unit: "mg/dL", ref: "< 150", type: "number", min: 0, max: 2000, step: 1 },
+  { key: "hdl_cholestrol", name: "HDL Cholesterol", category: "Lipid Profile", unit: "mg/dL", ref: "> 40", type: "number", min: 0, max: 200, step: 1 },
+  { key: "ldl_cholestrol", name: "LDL Cholesterol", category: "Lipid Profile", unit: "mg/dL", ref: "< 100", type: "number", min: 0, max: 400, step: 1 },
+  { key: "fasting_blood_sugar", name: "Fasting Blood Sugar", category: "Metabolic", unit: "mg/dL", ref: "70 - 99", type: "number", min: 0, max: 600, step: 1 },
+  { key: "tsh", name: "TSH", category: "Endocrine", unit: "µIU/mL", ref: "0.4 - 4.5", type: "number", min: 0, max: 100, step: 0.1 },
+  { key: "diabetes_type_2", name: "Type 2 Diabetes History", category: "Clinical History", unit: "flag", ref: "0=No, 1=Yes", type: "select", options: [{val:0, lbl:"No (0)"}, {val:1, lbl:"Yes (1)"}] },
+  { key: "hypertension", name: "Hypertension History", category: "Clinical History", unit: "flag", ref: "0=No, 1=Yes", type: "select", options: [{val:0, lbl:"No (0)"}, {val:1, lbl:"Yes (1)"}] },
+  { key: "alcohol_status", name: "Alcohol Intake", category: "Clinical History", unit: "flag", ref: "0=No, 1=Yes", type: "select", options: [{val:0, lbl:"No (0)"}, {val:1, lbl:"Yes (1)"}] },
+  { key: "smoking_status", name: "Smoking History", category: "Clinical History", unit: "flag", ref: "0=No, 1=Yes", type: "select", options: [{val:0, lbl:"No (0)"}, {val:1, lbl:"Yes (1)"}] },
+  { key: "pcos", name: "PCOS History", category: "Clinical History", unit: "category", ref: "0=No, 1=Yes, 2=N/A", type: "select", options: [{val:0, lbl:"No (0)"}, {val:1, lbl:"Yes (1)"}, {val:2, lbl:"Not Applicable / Male (2)"}] }
+];
+
+// Drag and drop event wiring
+const dropZone = document.getElementById('report-drop-zone');
+if (dropZone) {
+  ['dragenter', 'dragover'].forEach(name => {
+    dropZone.addEventListener(name, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('dragover');
+    });
+  });
+  ['dragleave', 'drop'].forEach(name => {
+    dropZone.addEventListener(name, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    });
+  });
+  dropZone.addEventListener('drop', (e) => {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      appendSelectedFiles(Array.from(files));
+    }
+  });
+}
+
+function handleFileSelected(e) {
+  if (e.target.files.length > 0) {
+    appendSelectedFiles(Array.from(e.target.files));
+  }
+}
+
+function appendSelectedFiles(newFiles) {
+  const allowed = ['.pdf', '.jpg', '.jpeg', '.png', '.webp'];
+  let addedCount = 0;
+
+  newFiles.forEach(file => {
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    if (!allowed.includes(ext)) {
+      alert(`Skipped '${file.name}': Unsupported format. Supported: PDF, JPG, PNG, WEBP.`);
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      alert(`Skipped '${file.name}': Exceeds 15 MB limit.`);
+      return;
+    }
+    // Prevent duplicate entries
+    if (!currentSelectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+      currentSelectedFiles.push(file);
+      addedCount++;
+    }
+  });
+
+  if (currentSelectedFiles.length > 0) {
+    renderSelectedFilesUI();
+    showToast(`Added ${addedCount} document(s). Total: ${currentSelectedFiles.length}`);
+  }
+}
+
+function renderSelectedFilesUI() {
+  const preview = document.getElementById('file-preview-card');
+  const dropZone = document.getElementById('report-drop-zone');
+  const countBadge = document.getElementById('files-summary-count');
+  const listContainer = document.getElementById('selected-files-list');
+
+  if (currentSelectedFiles.length === 0) {
+    dropZone.style.display = 'block';
+    preview.style.display = 'none';
+    return;
+  }
+
+  dropZone.style.display = 'none';
+  preview.style.display = 'flex';
+  countBadge.textContent = `${currentSelectedFiles.length} Document${currentSelectedFiles.length > 1 ? 's' : ''} Ready for Extraction`;
+
+  listContainer.innerHTML = currentSelectedFiles.map((file, idx) => {
+    const ext = '.' + file.name.split('.').pop().toLowerCase();
+    const isPdf = ext === '.pdf';
+    const iconClass = isPdf ? 'fa-file-pdf' : 'fa-file-image';
+    const sizeStr = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-card-solid); border:1px solid var(--border-color); border-radius:var(--radius-sm); padding:10px 14px;">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="color:var(--accent-cyan); font-size:18px;"><i class="fa-solid ${iconClass}"></i></div>
+          <div>
+            <div style="font-size:13px; font-weight:700; color:var(--text-primary);">${file.name}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${sizeStr} &bull; ${isPdf ? 'PDF Laboratory Document' : 'Scanned Image / Photo'}</div>
+          </div>
+        </div>
+        <button type="button" class="btn-secondary" onclick="removeSingleFile(${idx})" style="padding:4px 8px; font-size:11px; color:#EF4444; border-color:rgba(239,68,68,0.2);" title="Remove this file">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    `;
+  }).join('');
+}
+
+function removeSingleFile(idx) {
+  currentSelectedFiles.splice(idx, 1);
+  renderSelectedFilesUI();
+  if (currentSelectedFiles.length === 0) {
+    resetReportUpload();
+  }
+}
+
+function resetReportUpload() {
+  currentSelectedFiles = [];
+  currentExtractedData = null;
+  currentPredictionResult = null;
+  currentVerifiedInputs = null;
+  document.getElementById('file-report-input').value = "";
+  document.getElementById('report-drop-zone').style.display = 'block';
+  document.getElementById('file-preview-card').style.display = 'none';
+  document.getElementById('analyzer-review-card').style.display = 'none';
+  document.getElementById('analyzer-results-card').style.display = 'none';
+}
+
+async function triggerReportExtraction() {
+  if (currentSelectedFiles.length === 0) {
+    alert("Please upload at least one PDF or report image.");
+    return;
+  }
+
+  const btn = document.getElementById('btn-extract-now');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Extracting from ${currentSelectedFiles.length} Document(s)...`;
+
+  const formData = new FormData();
+  currentSelectedFiles.forEach(file => {
+    formData.append('files', file);
+  });
+
+  try {
+    const res = await fetch(`${API_BASE}/api/extract-report`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Extraction failed" }));
+      throw new Error(err.detail || `Server returned ${res.status}`);
+    }
+
+    const data = await res.json();
+    currentExtractedData = data;
+    renderExtractionReviewTable(data.parameters);
+    document.getElementById('analyzer-review-card').style.display = 'block';
+    document.getElementById('extraction-summary-badge').textContent = `${data.extracted_count} / ${data.total_fields} Extracted (${data.files_count} files merged)`;
+    showToast(`Merged & extracted ${data.extracted_count} parameters across ${data.files_count} files!`);
+    
+    // Smooth scroll down to review table
+    document.getElementById('analyzer-review-card').scrollIntoView({ behavior: 'smooth' });
+  } catch (err) {
+    alert("Extraction error: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Extract All Parameters`;
+  }
+}
+
+function renderExtractionReviewTable(params) {
+  const tbody = document.getElementById('review-table-body');
+  tbody.innerHTML = "";
+
+  ANALYZER_PARAMS.forEach(def => {
+    const p = params[def.key] || { value: null, status: "missing", confidence: 0, source_text: "" };
+    const tr = document.createElement('tr');
+
+    const isMissing = p.value === null || p.value === undefined;
+    const isAbnormal = p.is_abnormal;
+
+    // Status Badge
+    let statusBadge = "";
+    if (isMissing) {
+      statusBadge = `<span class="status-tag missing"><i class="fa-solid fa-circle-xmark"></i> Missing</span>`;
+    } else if (isAbnormal) {
+      statusBadge = `<span class="status-tag abnormal"><i class="fa-solid fa-triangle-exclamation"></i> Elevated</span>`;
+    } else {
+      statusBadge = `<span class="status-tag extracted"><i class="fa-solid fa-circle-check"></i> Extracted</span>`;
+    }
+
+    // Input Control
+    let inputControl = "";
+    if (def.type === "select") {
+      const currentVal = p.value !== null ? Number(p.value) : (def.key === "pcos" ? 2 : 0);
+      const optsHtml = def.options.map(o => `<option value="${o.val}" ${o.val === currentVal ? 'selected' : ''}>${o.lbl}</option>`).join('');
+      inputControl = `<select class="cell-input ${isMissing ? 'missing-alert' : ''}" id="rev_${def.key}" onchange="checkRowCompleted('${def.key}')">${optsHtml}</select>`;
+    } else {
+      const displayVal = p.value !== null ? p.value : "";
+      inputControl = `<input type="number" class="cell-input ${isMissing ? 'missing-alert' : ''}" id="rev_${def.key}" value="${displayVal}" step="${def.step}" min="${def.min}" max="${def.max}" placeholder="Enter" oninput="checkRowCompleted('${def.key}')">`;
+    }
+
+    const confDisplay = p.confidence ? `${Math.round(p.confidence * 100)}%` : '<span style="color:var(--text-muted)">—</span>';
+    const sourceDisplay = p.source_text ? `<span style="font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-secondary);" title="${p.source_text}">${p.source_text.length > 35 ? p.source_text.slice(0,35) + '…' : p.source_text}</span>` : '<span style="color:var(--text-muted)">Manual entry required</span>';
+
+    tr.innerHTML = `
+      <td><strong>${def.name}</strong></td>
+      <td><span style="font-size:11px; color:var(--text-muted);">${def.category}</span></td>
+      <td>${inputControl}</td>
+      <td><span style="font-family:'JetBrains Mono',monospace; font-size:11px;">${def.unit}</span></td>
+      <td><span style="font-size:11px; color:var(--text-secondary);">${def.ref}</span></td>
+      <td id="status_cell_${def.key}">${statusBadge}</td>
+      <td>${confDisplay}</td>
+      <td>${sourceDisplay}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function checkRowCompleted(key) {
+  const el = document.getElementById('rev_' + key);
+  if (!el) return;
+  const val = el.value.trim();
+  const statusCell = document.getElementById('status_cell_' + key);
+
+  if (val !== "") {
+    el.classList.remove('missing-alert');
+    if (statusCell) {
+      statusCell.innerHTML = `<span class="status-tag extracted"><i class="fa-solid fa-pen-to-square"></i> Verified</span>`;
+    }
+  } else {
+    el.classList.add('missing-alert');
+    if (statusCell) {
+      statusCell.innerHTML = `<span class="status-tag missing"><i class="fa-solid fa-circle-xmark"></i> Missing</span>`;
+    }
+  }
+}
+
+function fillSyntheticSampleReport() {
+  const syntheticValues = {
+    age: 48, gender: 0, bmi: 31.8,
+    alt: 65, ast: 52, ggt: 94, bilirubin_total: 1.3,
+    platelet_count: 210, triglycerides: 245, hdl_cholestrol: 38,
+    ldl_cholestrol: 155, fasting_blood_sugar: 126, tsh: 3.2,
+    diabetes_type_2: 1, hypertension: 1, alcohol_status: 1,
+    smoking_status: 1, pcos: 2
+  };
+
+  Object.entries(syntheticValues).forEach(([k, v]) => {
+    const el = document.getElementById('rev_' + k);
+    if (el) {
+      el.value = v;
+      checkRowCompleted(k);
+    }
+  });
+
+  showToast("Loaded typical clinical test report parameters!");
+}
+
+async function handleConfirmAndAnalyze() {
+  const banner = document.getElementById('validation-error-banner');
+  banner.style.display = 'none';
+
+  // Gather values and validate
+  const payload = {};
+  const missingKeys = [];
+
+  ANALYZER_PARAMS.forEach(def => {
+    const el = document.getElementById('rev_' + def.key);
+    if (!el || el.value === "") {
+      missingKeys.push(def.name);
+      if (el) el.classList.add('missing-alert');
+    } else {
+      payload[def.key] = Number(el.value);
+    }
+  });
+
+  if (missingKeys.length > 0) {
+    banner.style.display = 'block';
+    banner.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Missing ${missingKeys.length} required parameter(s): ${missingKeys.slice(0,4).join(', ')}${missingKeys.length > 4 ? ' and others' : ''}. Please enter values to proceed.`;
+    return;
+  }
+
+  // Active model selection from dropdown
+  const modelEl = document.getElementById('analyzer_model_type');
+  if (modelEl) {
+    payload['model_type'] = modelEl.value;
+  }
+
+  // Model inference
+  const btn = document.getElementById('btn-confirm-and-analyze');
+  btn.disabled = true;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Running NAFLD Classifier...`;
+
+  try {
+    const res = await fetch(`${API_BASE}/predict`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ detail: "Inference failed" }));
+      throw new Error(err.detail || `HTTP ${res.status}`);
+    }
+
+    const result = await res.json();
+    currentPredictionResult = result;
+    currentVerifiedInputs = payload;
+
+    // Display Assessment Results
+    renderAnalyzerResults(result, payload);
+    document.getElementById('analyzer-results-card').style.display = 'block';
+    document.getElementById('analyzer-results-card').scrollIntoView({ behavior: 'smooth' });
+    showToast(`Stratification complete: ${result.prediction} Risk!`);
+    
+    // Refresh history
+    loadAssessmentHistory();
+  } catch (err) {
+    alert("Prediction error: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="fa-solid fa-microchip"></i> Confirm Values & Analyze NAFLD Risk`;
+  }
+}
+
+function renderAnalyzerResults(res, inputs) {
+  const gradeColors = { None: "#10B981", Mild: "#F59E0B", Moderate: "#F97316", Severe: "#EF4444" };
+  const gradeBgs = { None: "rgba(16, 185, 129, 0.2)", Mild: "rgba(245, 158, 11, 0.2)", Moderate: "rgba(249, 115, 22, 0.2)", Severe: "rgba(239, 68, 68, 0.2)" };
+
+  const color = gradeColors[res.prediction] || "#38BDF8";
+  const bg = gradeBgs[res.prediction] || "rgba(56, 189, 248, 0.2)";
+
+  const badge = document.getElementById('analyzer-res-badge');
+  badge.textContent = `${res.prediction} Risk`;
+  badge.style.color = color;
+  badge.style.backgroundColor = bg;
+
+  document.getElementById('analyzer-res-grade-text').textContent = `Grade ${res.prediction_class} (${res.prediction})`;
+  document.getElementById('analyzer-res-grade-text').style.color = color;
+  document.getElementById('analyzer-res-conf-text').textContent = `Model Confidence: ${(res.probability * 100).toFixed(1)}%`;
+  document.getElementById('analyzer-res-timestamp').textContent = `Assessment Completed: ${new Date().toLocaleTimeString()} • ${new Date().toLocaleDateString()}`;
+
+  // Update Screening Banner and Active Model details
+  const banner = document.getElementById('analyzer-res-screening-banner');
+  if (banner) {
+    banner.style.display = 'block';
+    if (res.binary_screening && res.binary_screening.status) {
+      const isPos = res.binary_screening.is_positive;
+      const statusColor = isPos ? 'var(--accent-orange)' : 'var(--accent-green)';
+      const confPct = (res.binary_screening.confidence * 100).toFixed(1);
+      document.getElementById('analyzer-res-screening-status').innerHTML = `<i class="fa-solid fa-stethoscope"></i> Screening: <span style="color:${statusColor}">${res.binary_screening.status}</span> (${confPct}%)`;
+      document.getElementById('analyzer-res-screening-metric').textContent = `Specificity: ${res.binary_screening.specificity_benchmark || '92.5%'} | ROC-AUC: ${res.binary_screening.roc_auc_benchmark || '0.935'}`;
+    }
+    if (res.model_info && res.model_info.model_name) {
+      document.getElementById('analyzer-res-model-name').innerHTML = `<i class="fa-solid fa-microchip"></i> Model: <strong>${res.model_info.model_name}</strong>`;
+    }
+  }
+
+  // Multi-Class Donut Chart
+  renderAnalyzerProbChart(res.class_probabilities);
+
+  // Radar Chart
+  renderAnalyzerRadarChart(inputs);
+}
+
+function renderAnalyzerProbChart(probs) {
+  const ctx = document.getElementById('analyzerProbChart').getContext('2d');
+  const labels = Object.keys(probs);
+  const data = Object.values(probs).map(v => (v * 100).toFixed(1));
+
+  if (analyzerProbChartInstance) analyzerProbChartInstance.destroy();
+  analyzerProbChartInstance = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: ['#10B981', '#F59E0B', '#F97316', '#EF4444'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#94A3B8', font: { size: 10 } } }
+      },
+      cutout: '65%'
+    }
+  });
+}
+
+function renderAnalyzerRadarChart(inputs) {
+  const ctx = document.getElementById('analyzerRadarChart').getContext('2d');
+  const bmiNorm = Math.min(100, (inputs.bmi / 25) * 50);
+  const altNorm = Math.min(100, (inputs.alt / 45) * 50);
+  const astNorm = Math.min(100, (inputs.ast / 40) * 50);
+  const ggtNorm = Math.min(100, (inputs.ggt / 40) * 50);
+  const trigNorm = Math.min(100, (inputs.triglycerides / 150) * 50);
+
+  if (analyzerRadarChartInstance) analyzerRadarChartInstance.destroy();
+  analyzerRadarChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['BMI', 'ALT', 'AST', 'GGT', 'Triglycerides'],
+      datasets: [{
+        label: 'Patient Level',
+        data: [bmiNorm, altNorm, astNorm, ggtNorm, trigNorm],
+        backgroundColor: 'rgba(56, 189, 248, 0.25)',
+        borderColor: '#38BDF8',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          angleLines: { color: 'rgba(255,255,255,0.1)' },
+          grid: { color: 'rgba(255,255,255,0.1)' },
+          pointLabels: { color: '#94A3B8', font: { size: 10 } },
+          ticks: { display: false }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+async function downloadPredictorPDF() {
+  if (!currentPredictionResult || !currentVerifiedInputs) {
+    const payload = getFormData();
+    try {
+      const res = await fetch(`${API_BASE}/predict`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (res.ok) {
+        currentPredictionResult = await res.json();
+        currentVerifiedInputs = payload;
+        updateDashboard(currentPredictionResult, currentVerifiedInputs);
+      }
+    } catch (e) {
+      alert("Please ensure all clinical values are valid before exporting PDF: " + e.message);
+      return;
+    }
+  }
+  await downloadAssessmentPDF();
+}
+
+async function downloadAssessmentPDF() {
+  if (!currentPredictionResult || !currentVerifiedInputs) {
+    alert("Please enter patient clinical parameters and compute an analysis first.");
+    return;
+  }
+
+  const buttons = [
+    document.getElementById('btn-download-pdf-report'),
+    document.getElementById('btn-predictor-download-pdf')
+  ].filter(Boolean);
+
+  buttons.forEach(btn => {
+    btn.disabled = true;
+    btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Generating Complete Pathology PDF...`;
+  });
+
+  const randHex = Math.random().toString(16).substring(2, 8).toUpperCase();
+  const assessmentId = `NAFLD-2026-${randHex}`;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/generate-pdf`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        assessment_id: assessmentId,
+        patient_inputs: currentVerifiedInputs,
+        prediction_result: currentPredictionResult
+      })
+    });
+
+    if (!res.ok) throw new Error("Server error generating PDF report (Status " + res.status + ")");
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `NAFLD_Complete_Diagnostic_Report_${assessmentId}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+    showToast("Official Complete Diagnostic Test PDF Downloaded!");
+  } catch (err) {
+    alert("Could not download PDF report: " + err.message);
+  } finally {
+    buttons.forEach(btn => {
+      btn.disabled = false;
+      btn.innerHTML = `<i class="fa-solid fa-file-pdf"></i> Download Official Clinical Test PDF`;
+    });
+  }
+}
+
+async function loadAssessmentHistory() {
+  const container = document.getElementById('assessment-history-list');
+  try {
+    const res = await fetch(`${API_BASE}/api/assessments/history`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const history = data.history || [];
+
+    if (history.length === 0) {
+      container.innerHTML = `<div style="text-align:center; padding:24px; color:var(--text-muted); font-size:13px;">No previous report assessments recorded in this session.</div>`;
+      return;
+    }
+
+    const gradeColors = { None: "#10B981", Mild: "#F59E0B", Moderate: "#F97316", Severe: "#EF4444" };
+
+    container.innerHTML = history.map(item => `
+      <div class="history-item">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div style="width:36px; height:36px; border-radius:50%; background:rgba(56,189,248,0.1); display:flex; align-items:center; justify-content:center; color:var(--accent-cyan);">
+            <i class="fa-solid fa-file-medical"></i>
+          </div>
+          <div>
+            <div style="font-weight:700; font-size:13px;">Assessment ${item.id}</div>
+            <div style="font-size:11px; color:var(--text-muted);">${item.timestamp} &bull; Model: XGBoost</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <span class="badge" style="font-weight:700; font-size:11px; padding:3px 10px; border-radius:12px; color:${gradeColors[item.prediction] || '#38BDF8'}; background:rgba(255,255,255,0.05); border:1px solid currentColor;">
+            ${item.prediction} Risk (${(item.probability * 100).toFixed(0)}%)
+          </span>
+          <button class="btn-secondary" onclick="exportHistoryPDF('${item.id}')" style="padding:4px 10px; font-size:11px;">
+            <i class="fa-solid fa-download"></i> PDF
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } catch (e) {
+    console.error("Failed to load history:", e);
+  }
+}
+
+async function exportHistoryPDF(id) {
+  showToast(`Retrieving PDF for Assessment ${id}...`);
+  try {
+    const res = await fetch(`${API_BASE}/api/assessments/history`);
+    const data = await res.json();
+    const target = data.history.find(h => h.id === id);
+    if (!target) return;
+
+    const pdfRes = await fetch(`${API_BASE}/api/generate-pdf`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        assessment_id: target.id,
+        patient_inputs: target.patient_inputs,
+        prediction_result: target.prediction_result
+      })
+    });
+    const blob = await pdfRes.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `NAFLD_Assessment_${target.id}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (e) {
+    alert("Export failed: " + e.message);
+  }
+}
+
+// Theme Toggle Handler
+const themeBtn = document.getElementById('theme-toggle');
+if (themeBtn) {
+  themeBtn.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    const target = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', target);
+    themeBtn.innerHTML = target === 'dark' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+  });
+}
+
+// App Initialization
+window.addEventListener('DOMContentLoaded', () => {
+  updateAuthState();
+  if (!currentUser) {
+    navigateTo('login');
+  } else {
+    navigateTo('home');
+    loadPreset('none');
+  }
+  loadAssessmentHistory();
+});
+</script>
+</body>
+</html>

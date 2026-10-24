@@ -1,0 +1,30 @@
+{
+  "feature_order": [
+    "age",
+    "gender",
+    "bmi",
+    "alcohol_status",
+    "smoking_status",
+    "alt",
+    "ast",
+    "ggt",
+    "bilirubin_total",
+    "triglycerides",
+    "hdl_cholestrol",
+    "ldl_cholestrol",
+    "platelet_count",
+    "fasting_blood_sugar",
+    "tsh",
+    "diabetes_type_2",
+    "hypertension",
+    "pcos"
+  ],
+  "best_model": "XGBoost",
+  "best_model_uses_scaler": false,
+  "target_classes": {
+    "0": "None",
+    "1": "Mild",
+    "2": "Moderate",
+    "3": "Severe"
+  }
+}

@@ -1,0 +1,51 @@
+Test_ID,Patient_Name,Age,Gender,BMI,ALT,AST,GGT,Triglycerides,Ref_Grade,Ref_Type,Pred_Grade_RF,Pred_Label_RF,Prob_RF,Match_RF,Pred_Grade_XGB,Pred_Label_XGB,Match_XGB,Pred_Grade_ENS,Match_ENS,Binary_Match,Grade_Distance,Binary_Screening_Status,Binary_Confidence
+TEST001,Aarav Iyer,60,F,22.7,35.2,28.2,43.6,106.2,0,Grade 0 - None,0,None,0.984,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.968
+TEST002,Diya Kumar,43,F,24.4,41.7,27.3,49.9,144.5,0,Grade 0 - None,0,None,0.904,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.896
+TEST003,Kavin Nair,51,F,33.0,48.4,29.5,68.4,233.6,2,Grade 2 - Moderate,2,Moderate,0.804,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),1.0
+TEST004,Ananya Prasad,55,M,23.4,36.1,14.9,26.1,75.3,0,Grade 0 - None,0,None,0.972,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.98
+TEST005,Arjun Rajan,73,M,24.2,37.5,13.3,16.4,180.5,0,Grade 0 - None,0,None,0.908,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.94
+TEST006,Meera Das,34,M,26.2,13.2,19.6,20.8,88.0,0,Grade 0 - None,0,None,0.976,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.96
+TEST007,Rohan Menon,73,M,27.8,57.7,18.2,34.3,305.4,2,Grade 2 - Moderate,2,Moderate,0.744,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.812
+TEST008,Ishita Sharma,56,M,24.8,35.9,24.7,25.5,135.3,0,Grade 0 - None,0,None,0.916,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.892
+TEST009,Vikram Patel,33,M,29.1,45.9,29.2,91.8,299.9,1,Grade 1 - Mild,1,Mild,0.796,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.956
+TEST010,Nila Reddy,34,M,27.2,46.5,20.7,24.8,151.4,1,Grade 1 - Mild,1,Mild,0.868,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.584
+TEST011,Aditya Iyer,63,F,33.2,26.1,35.5,50.4,135.8,2,Grade 2 - Moderate,2,Moderate,0.856,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.96
+TEST012,Kavya Kumar,73,F,22.9,27.5,19.1,25.5,168.3,1,Grade 1 - Mild,1,Mild,0.732,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.704
+TEST013,Rahul Nair,35,M,32.8,20.0,16.0,35.0,428.1,3,Grade 3 - Severe,3,Severe,0.392,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.932
+TEST014,Priya Prasad,54,M,35.6,71.5,115.8,450.0,248.2,3,Grade 3 - Severe,3,Severe,0.976,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),1.0
+TEST015,Sanjay Rajan,71,M,23.6,20.1,27.5,31.3,112.7,0,Grade 0 - None,0,None,0.92,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.964
+TEST016,Aadhya Das,41,F,31.2,42.0,33.6,84.2,162.1,1,Grade 1 - Mild,1,Mild,0.776,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.96
+TEST017,Mohan Menon,65,F,34.0,51.8,56.1,46.1,243.2,3,Grade 3 - Severe,3,Severe,0.888,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),1.0
+TEST018,Keerthi Sharma,60,F,31.4,66.0,75.9,243.8,283.8,3,Grade 3 - Severe,3,Severe,0.884,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.992
+TEST019,Varun Patel,30,M,29.8,18.0,13.0,25.0,141.7,1,Grade 1 - Mild,1,Mild,0.784,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.9
+TEST020,Sahana Reddy,65,F,32.9,61.2,47.3,102.1,165.0,3,Grade 3 - Severe,3,Severe,0.82,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.988
+TEST021,Naveen Iyer,37,M,30.4,34.6,28.4,38.0,119.1,1,Grade 1 - Mild,1,Mild,0.804,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.936
+TEST022,Divya Kumar,65,F,27.8,71.7,56.0,181.6,174.6,2,Grade 2 - Moderate,1,Mild,0.472,False,1,Mild,False,1,False,True,1,Positive (NAFLD Indicated),0.972
+TEST023,Surya Nair,63,F,35.2,49.0,88.3,237.4,273.5,3,Grade 3 - Severe,3,Severe,0.836,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.988
+TEST024,Janani Prasad,28,M,29.1,43.1,74.4,101.6,152.0,2,Grade 2 - Moderate,2,Moderate,0.796,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.956
+TEST025,Hari Rajan,28,M,31.2,49.1,27.7,47.8,143.1,1,Grade 1 - Mild,1,Mild,0.752,True,2,Moderate,False,1,True,True,0,Positive (NAFLD Indicated),0.992
+TEST026,Anika Das,48,M,37.5,49.3,63.5,144.8,155.5,3,Grade 3 - Severe,3,Severe,0.492,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.996
+TEST027,Pranav Menon,58,M,34.4,62.1,26.9,37.2,170.2,2,Grade 2 - Moderate,2,Moderate,0.616,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),1.0
+TEST028,Lavanya Sharma,47,M,25.1,23.2,34.5,28.6,228.2,1,Grade 1 - Mild,1,Mild,0.696,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.796
+TEST029,Vijay Patel,26,M,25.1,33.0,21.4,24.7,111.5,0,Grade 0 - None,0,None,0.9,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.896
+TEST030,Mithra Reddy,73,M,32.9,33.3,24.1,38.6,444.0,3,Grade 3 - Severe,3,Severe,0.78,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.96
+TEST031,Ashwin Iyer,30,M,25.3,18.4,21.1,15.3,110.0,0,Grade 0 - None,0,None,0.932,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.932
+TEST032,Pooja Kumar,23,M,29.1,42.6,15.9,39.5,192.6,1,Grade 1 - Mild,1,Mild,0.824,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.952
+TEST033,Karthik Nair,49,M,32.8,79.4,66.2,45.4,196.0,2,Grade 2 - Moderate,2,Moderate,0.8,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.996
+TEST034,Nandini Prasad,44,M,31.0,34.9,18.0,27.0,231.8,2,Grade 2 - Moderate,2,Moderate,0.76,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.94
+TEST035,Gokul Rajan,51,M,24.8,27.3,20.9,36.8,116.1,0,Grade 0 - None,0,None,0.928,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.956
+TEST036,Shruthi Das,38,F,29.4,26.9,37.1,41.5,125.8,2,Grade 2 - Moderate,2,Moderate,0.788,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.928
+TEST037,Rithik Menon,52,M,25.4,28.9,38.3,72.6,161.6,1,Grade 1 - Mild,1,Mild,0.796,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.82
+TEST038,Aishwarya Sharma,59,M,30.8,77.6,76.9,54.4,164.4,3,Grade 3 - Severe,3,Severe,0.488,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),1.0
+TEST039,Manoj Patel,40,M,29.0,69.5,40.9,165.0,82.9,1,Grade 1 - Mild,1,Mild,0.808,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.976
+TEST040,Yazhini Reddy,65,M,31.9,46.7,42.0,39.2,252.6,3,Grade 3 - Severe,2,Moderate,0.696,False,2,Moderate,False,2,False,True,1,Positive (NAFLD Indicated),0.992
+TEST041,Siddharth Iyer,45,F,32.1,52.7,39.5,32.0,340.4,2,Grade 2 - Moderate,2,Moderate,0.76,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.992
+TEST042,Deepa Kumar,47,F,32.8,43.6,44.3,187.4,164.3,2,Grade 2 - Moderate,2,Moderate,0.54,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.984
+TEST043,Bharath Nair,63,M,23.1,28.9,23.9,29.6,101.9,0,Grade 0 - None,0,None,0.964,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.956
+TEST044,Swetha Prasad,22,M,32.6,39.6,46.3,58.1,161.7,2,Grade 2 - Moderate,2,Moderate,0.864,True,2,Moderate,True,2,True,True,0,Positive (NAFLD Indicated),0.96
+TEST045,Dinesh Rajan,48,M,32.5,42.3,119.5,370.2,142.1,3,Grade 3 - Severe,3,Severe,0.96,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.996
+TEST046,Akila Das,31,M,31.9,36.8,34.1,154.1,218.8,3,Grade 3 - Severe,3,Severe,0.776,True,3,Severe,True,3,True,True,0,Positive (NAFLD Indicated),0.98
+TEST047,Nithin Menon,38,M,25.6,57.7,41.7,153.1,102.7,1,Grade 1 - Mild,1,Mild,0.848,True,1,Mild,True,1,True,True,0,Negative (Healthy - Low Risk),0.524
+TEST048,Harini Sharma,37,F,22.8,40.8,26.9,54.0,141.5,0,Grade 0 - None,0,None,0.876,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.892
+TEST049,Ajay Patel,23,M,22.6,33.7,26.7,42.6,87.5,0,Grade 0 - None,0,None,0.956,True,0,None,True,0,True,True,0,Negative (Healthy - Low Risk),0.924
+TEST050,Sowmya Reddy,69,F,26.8,38.8,30.4,25.2,69.0,1,Grade 1 - Mild,1,Mild,0.708,True,1,Mild,True,1,True,True,0,Positive (NAFLD Indicated),0.728

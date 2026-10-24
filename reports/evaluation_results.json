@@ -1,0 +1,157 @@
+{
+  "LogisticRegression": {
+    "accuracy": 0.7795,
+    "precision_macro": 0.7267411192125091,
+    "recall_macro": 0.7634140128712944,
+    "f1_macro": 0.7422840131916848,
+    "roc_auc_macro": 0.9327454904583216,
+    "classification_report": {
+      "0": {
+        "precision": 0.9224952741020794,
+        "recall": 0.8243243243243243,
+        "f1-score": 0.8706512042818911,
+        "support": 1184.0
+      },
+      "1": {
+        "precision": 0.5670289855072463,
+        "recall": 0.6864035087719298,
+        "f1-score": 0.621031746031746,
+        "support": 456.0
+      },
+      "2": {
+        "precision": 0.6359832635983264,
+        "recall": 0.6816143497757847,
+        "f1-score": 0.658008658008658,
+        "support": 223.0
+      },
+      "3": {
+        "precision": 0.7814569536423841,
+        "recall": 0.8613138686131386,
+        "f1-score": 0.8194444444444444,
+        "support": 137.0
+      },
+      "accuracy": 0.7795,
+      "macro avg": {
+        "precision": 0.7267411192125091,
+        "recall": 0.7634140128712944,
+        "f1-score": 0.7422840131916848,
+        "support": 2000.0
+      },
+      "weighted avg": {
+        "precision": 0.7998417461797999,
+        "recall": 0.7795,
+        "f1-score": 0.7865206608425274,
+        "support": 2000.0
+      }
+    }
+  },
+  "RandomForest": {
+    "accuracy": 0.782,
+    "precision_macro": 0.727050904499558,
+    "recall_macro": 0.6972594711401743,
+    "f1_macro": 0.7081289016796701,
+    "roc_auc_macro": 0.9343415755128758,
+    "classification_report": {
+      "0": {
+        "precision": 0.8410295230885693,
+        "recall": 0.9383445945945946,
+        "f1-score": 0.8870259481037924,
+        "support": 1184.0
+      },
+      "1": {
+        "precision": 0.6275659824046921,
+        "recall": 0.4692982456140351,
+        "f1-score": 0.5370138017565872,
+        "support": 456.0
+      },
+      "2": {
+        "precision": 0.6482412060301508,
+        "recall": 0.57847533632287,
+        "f1-score": 0.6113744075829384,
+        "support": 223.0
+      },
+      "3": {
+        "precision": 0.7913669064748201,
+        "recall": 0.8029197080291971,
+        "f1-score": 0.7971014492753623,
+        "support": 137.0
+      },
+      "accuracy": 0.782,
+      "macro avg": {
+        "precision": 0.727050904499558,
+        "recall": 0.6972594711401743,
+        "f1-score": 0.7081289016796701,
+        "support": 2000.0
+      },
+      "weighted avg": {
+        "precision": 0.7674620492225898,
+        "recall": 0.782,
+        "f1-score": 0.770328203798807,
+        "support": 2000.0
+      }
+    }
+  },
+  "XGBoost": {
+    "accuracy": 0.793,
+    "precision_macro": 0.7410974915949811,
+    "recall_macro": 0.7573224344925871,
+    "f1_macro": 0.7486107120079624,
+    "roc_auc_macro": 0.9317940172392019,
+    "classification_report": {
+      "0": {
+        "precision": 0.9061946902654867,
+        "recall": 0.8648648648648649,
+        "f1-score": 0.88504753673293,
+        "support": 1184.0
+      },
+      "1": {
+        "precision": 0.5968063872255489,
+        "recall": 0.6557017543859649,
+        "f1-score": 0.6248693834900731,
+        "support": 456.0
+      },
+      "2": {
+        "precision": 0.6488888888888888,
+        "recall": 0.6547085201793722,
+        "f1-score": 0.6517857142857143,
+        "support": 223.0
+      },
+      "3": {
+        "precision": 0.8125,
+        "recall": 0.8540145985401459,
+        "f1-score": 0.8327402135231317,
+        "support": 137.0
+      },
+      "accuracy": 0.793,
+      "macro avg": {
+        "precision": 0.7410974915949811,
+        "recall": 0.7573224344925871,
+        "f1-score": 0.7486107120079624,
+        "support": 2000.0
+      },
+      "weighted avg": {
+        "precision": 0.8005464740357043,
+        "recall": 0.793,
+        "f1-score": 0.7961351729508228,
+        "support": 2000.0
+      }
+    }
+  },
+  "ImprovedRandomForest_Notebook": {
+    "accuracy": 0.7895,
+    "precision_macro": 0.7332,
+    "recall_macro": 0.6981,
+    "f1_macro": 0.7131,
+    "roc_auc_macro": 0.9323,
+    "description": "Integrated from non-alcoholic-fatty-liver-disease-92-accuracy.ipynb (make_pipeline with SimpleImputer, StandardScaler, RandomForestClassifier n_estimators=250)"
+  },
+  "Binary_Screening_Notebook_Architecture": {
+    "Accuracy": 0.8655,
+    "ROC_AUC": 0.9353,
+    "Healthy_Specificity_Recall": 0.9248,
+    "Healthy_Precision": 0.8588,
+    "NAFLD_Sensitivity_Recall": 0.7794,
+    "NAFLD_Precision": 0.8772,
+    "F1": 0.8254
+  }
+}

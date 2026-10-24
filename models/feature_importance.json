@@ -1,0 +1,34 @@
+[
+  {
+    "feature": "bmi",
+    "importance": 0.3372352123260498
+  },
+  {
+    "feature": "alcohol_status",
+    "importance": 0.06403513252735138
+  },
+  {
+    "feature": "triglycerides",
+    "importance": 0.06295167654752731
+  },
+  {
+    "feature": "ast",
+    "importance": 0.05966499075293541
+  },
+  {
+    "feature": "ggt",
+    "importance": 0.0565529502928257
+  },
+  {
+    "feature": "alt",
+    "importance": 0.05333422124385834
+  },
+  {
+    "feature": "hypertension",
+    "importance": 0.04675838723778725
+  },
+  {
+    "feature": "diabetes_type_2",
+    "importance": 0.046163707971572876
+  }
+]
